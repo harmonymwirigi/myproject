@@ -1,0 +1,214 @@
+{% extends 'dashboard/base.html' %} {% block content %}
+  <div class="content-page">
+    <div class="content">
+      <div class="container-fluid">
+        <h1>Edit Data for Project: {{ project.name }}</h1>
+
+        <form method="POST">
+          {% csrf_token %}
+
+          <!-- Duration -->
+          <h2>Duration</h2>
+          <table class="table">
+            <tr>
+              <th>Project</th>
+              <th>Value</th>
+            </tr>
+            {% for duration in durations %}
+              <tr>
+                <td>{{ duration.projects }}</td>
+                <td>
+                  <input type="number" name="duration_{{ duration.id }}" value="{{ duration.value }}" class="form-control" />
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+
+          <!-- Reqskill -->
+          <h2>Required Skills</h2>
+          <table class="table">
+            <tr>
+              <th>Skill</th>
+              <th>Project</th>
+              <th>Value</th>
+            </tr>
+            {% for reqskill in reqskills %}
+              <tr>
+                <td>{{ reqskill.skills }}</td>
+                <td>{{ reqskill.projects }}</td>
+                <td>
+                  <input type="number" name="reqskill_{{ reqskill.id }}" value="{{ reqskill.value }}" class="form-control" />
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+
+          <!-- MGskill -->
+          <h2>Manager Skills</h2>
+          <table class="table">
+            <tr>
+              <th>Skill</th>
+              <th>Manager</th>
+              <th>Value</th>
+            </tr>
+            {% for mgskill in mgskills %}
+              <tr>
+                <td>{{ mgskill.skills }}</td>
+                <td>{{ mgskill.managers }}</td>
+                <td>
+                  <input type="number" name="mgskill_{{ mgskill.id }}" value="{{ mgskill.value }}" class="form-control" />
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+
+          <!-- DS -->
+          <h2>DS (Some Specific Data)</h2>
+          <!-- Replace "Some Specific Data" with the actual meaning of DS -->
+          <table class="table">
+            <tr>
+              <th>Project</th>
+              <th>Value</th>
+            </tr>
+            {% for ds in ds_entries %}
+              <tr>
+                <td>{{ ds.projects }}</td>
+                <td>
+                  <input type="number" name="ds_{{ ds.id }}" value="{{ ds.value }}" class="form-control" />
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+
+          <!-- FS -->
+          <h2>FS (Some Specific Data)</h2>
+          <!-- Replace "Some Specific Data" with the actual meaning of FS -->
+          <table class="table">
+            <tr>
+              <th>Project</th>
+              <th>Value</th>
+            </tr>
+            {% for fs in fs_entries %}
+              <tr>
+                <td>{{ fs.projects }}</td>
+                <td>
+                  <input type="number" name="fs_{{ fs.id }}" value="{{ fs.value }}" class="form-control" />
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+
+          <!-- Score -->
+          <h2>Scores</h2>
+          <table class="table">
+            <tr>
+              <th>Team Lead</th>
+              <th>Value</th>
+            </tr>
+            {% for score in scores %}
+              <tr>
+                <td>{{ score.teamleads }}</td>
+                <td>
+                  <input type="number" name="score_{{ score.id }}" value="{{ score.value }}" class="form-control" step="0.01" />
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+
+          <!-- Cost -->
+          <h2>Costs</h2>
+          <table class="table">
+            <tr>
+              <th>Team Lead</th>
+              <th>Value</th>
+            </tr>
+            {% for cost in costs %}
+              <tr>
+                <td>{{ cost.teamleads }}</td>
+                <td>
+                  <input type="number" name="cost_{{ cost.id }}" value="{{ cost.value }}" class="form-control" />
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+
+          <!-- WAD -->
+          <h2>WAD (Workload Allocation)</h2>
+          <!-- Replace "Workload Allocation" with the actual meaning of WAD -->
+          <table class="table">
+            <tr>
+              <th>Team Lead</th>
+              <th>Value</th>
+            </tr>
+            {% for wad in wads %}
+              <tr>
+                <td>{{ wad.teamleads }}</td>
+                <td>
+                  <input type="number" name="wad_{{ wad.id }}" value="{{ wad.value }}" class="form-control" />
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+
+          <!-- Calendar -->
+          <!-- Calendar -->
+          <h2>Calendar</h2>
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Team Lead</th>
+                  {% for date in date_range %}
+                    <th>{{ date }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for team_lead, values in calendar_data.items %}
+                  <tr>
+                    <td>{{ team_lead }}</td>
+                    {% for value in values %}
+                      <td>
+                        <input type="number" name="calendar_{{ team_lead }}_{{ forloop.counter0 }}" value="{{ value }}" class="form-control" min="0" max="1" style="width: 60px" />
+                      </td>
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- PreferenceCost Matrix -->
+          <h2>Preference Costs</h2>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th></th>
+                <!-- Empty header cell for the row labels -->
+                {% for col_project in project_names %}
+                  <th>{{ col_project }}</th>
+                  <!-- Column headers for projects -->
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for row_project, costs in preference_matrix.items %}
+                <tr>
+                  <td>{{ row_project }}</td>
+                  <!-- Row header for project_from -->
+                  {% for col_project, cost_value in costs.items %}
+                    <td>
+                      <input type="number" name="pref_cost_{{ row_project }}_{{ col_project }}" value="{{ cost_value }}" class="form-control" min="0" />
+                    </td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

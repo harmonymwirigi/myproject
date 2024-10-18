@@ -1,0 +1,115 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="content-page">
+    <div class="content">
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">DSS</a></li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Optimize</a></li>
+                                <li class="breadcrumb-item active">Constraints</li>
+                            </ol>
+                        </div>
+                        <h4 class="page-title">Data Input for Project: {{ project.name }}</h4>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+
+            <form method="POST" class="row">
+                {% csrf_token %}
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+
+                            
+
+                            <!-- Tab Content -->
+                            <div class="tab-content">
+
+                                <!-- Sets Content -->
+                                <div class="tab-pane show active" id="set">
+                                    <div class="row">
+                                        <div class="table-responsive">
+                                            <table class="table mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>Projects</th>
+                                                        <th>Team Leads</th>
+                                                        <th>Time Period</th>
+                                                        <th>Skills</th>
+                                                        <th>Managers</th>
+                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="set-table-body">
+                                                    <tr>
+                                                        <td><input type="number" name="projects" class="form-control" required></td>
+                                                        <td><input type="number" name="teamleads" class="form-control" required></td>
+                                                        <td><input type="number" name="timeperiod" class="form-control" required></td>
+                                                        <td><input type="number" name="skills" class="form-control" required></td>
+                                                        <td><input type="number" name="managers" class="form-control" required></td>
+                                                        
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                           
+                                        </div>
+                                    </div> <!-- end row-->
+                                </div>
+                                <!-- End Sets Content-->
+
+                              
+                                <!-- End Duration Content-->
+                            </div> <!-- end tab content-->
+
+                            <div class="col-sm-6">
+                                <div class="text-sm-end">
+                                    <button type="submit" class="btn btn-secondary">Submit Data</button>
+                                </div>
+                            </div> <!-- end col -->
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </div> <!-- end col -->
+            </form>
+            <!-- end row-->
+
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <script>document.write(new Date().getFullYear())</script> © Hyper - Coderthemes.com
+                </div>
+                <div class="col-md-6">
+                    <div class="text-md-end footer-links d-none d-md-block">
+                        <a href="javascript: void(0);">About</a>
+                        <a href="javascript: void(0);">Support</a>
+                        <a href="javascript: void(0);">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end Footer -->
+
+</div>
+
+
+
+
+</script>
+
+{% endblock content %}
+

@@ -1,0 +1,72 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="content-page">
+    <div class="content">
+      <!-- Start Content -->
+      <div class="container-fluid">
+        {% include 'dashboard/message.html' %}
+
+        <!-- files row -->
+        <div class="row">
+          {% if files %}
+            {% for file in files %}
+              <div class="col-xl-4 col-lg-6">
+                <div class="card">
+                  <div class="d-flex card-header justify-content-between align-items-center">
+                    <h4 class="header-title">Results</h4>
+                    <div class="dropdown">
+                      <a href="#" class="dropdown-toggle arrow-none card-drop p-0" data-bs-toggle="dropdown" aria-expanded="false"></a>
+                      <div class="dropdown-menu dropdown-menu-end">
+                        <a href="javascript:void(0);" class="dropdown-item">Refresh Report</a>
+                        <a href="javascript:void(0);" class="dropdown-item">Export Report</a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Use file.file.url to access the file's media URL -->
+                  <img class="card-body pt-0" src="{{ file.file.url }}" alt="{{ file.filename }}" />
+
+                  <!-- Add the Download Button -->
+                  <div class="card-body pt-0">
+                    <a href="{{ file.file.url }}" download="{{ file.filename }}" class="btn btn-primary"><i class="mdi mdi-download"></i> Download</a>
+                  </div>
+                </div>
+                <!-- end card -->
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="col">
+              <p>No files available.</p>
+            </div>
+          {% endif %}
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- container -->
+    </div>
+    <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-6">
+            <script>
+              document.write(new Date().getFullYear())
+            </script>© Hyper - Coderthemes.com
+          </div>
+          <div class="col-md-6">
+            <div class="text-md-end footer-links d-none d-md-block">
+              <a href="javascript: void(0);">About</a>
+              <a href="javascript: void(0);">Support</a>
+              <a href="javascript: void(0);">Contact Us</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- end Footer -->
+  </div>
+{% endblock %}

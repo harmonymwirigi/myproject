@@ -1,0 +1,108 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+  <div class="content-page">
+    <div class="content">
+      <!-- Start Content -->
+      <div class="container-fluid">
+        <!-- start page title -->
+        <div class="row">
+          <div class="col-12">
+            <div class="page-title-box">
+              <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                  <li class="breadcrumb-item">
+                    <a href="javascript: void(0);">SAAS</a>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <a href="javascript: void(0);">Client</a>
+                  </li>
+                  <li class="breadcrumb-item active">Payment History</li>
+                </ol>
+              </div>
+              <h4 class="page-title">Payments</h4>
+            </div>
+          </div>
+        </div>
+        <!-- end page title -->
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-centered table-nowrap mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Payment Status</th>
+                        <th>Amount</th>
+                        <th style="width: 125px;">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for payment in payments %}
+                        <tr>
+                          <!-- Use forloop.counter to display the row number -->
+                          <td>
+                            <a href="javascript:void(0);" class="text-body fw-bold">{{ forloop.counter }}</a>
+                          </td>
+                          <td>
+                            {{ payment.date|date:'F d, Y' }} <small class="text-muted">{{ payment.date|date:'h:i A' }}</small>
+                          </td>
+                          <td>
+                            {% if payment.status == 'completed' %}
+                              <h5><span class="badge badge-success-lighten"><i class="mdi mdi-bitcoin"></i> Paid</span></h5>
+                            {% elif payment.status == 'pending' %}
+                              <h5><span class="badge badge-warning-lighten"><i class="mdi mdi-clock-outline"></i> Pending</span></h5>
+                            {% else %}
+                              <h5><span class="badge badge-danger-lighten"><i class="mdi mdi-alert-circle-outline"></i> Failed</span></h5>
+                            {% endif %}
+                          </td>
+                          <td>${{ payment.amount }}</td>
+                          <td>
+                            <!-- Replace with actual links to view, edit, or delete payment -->
+                            <a href="javascript:void(0);" class="action-icon"><i class="mdi mdi-eye"></i></a>
+                            <a href="javascript:void(0);" class="action-icon"><i class="mdi mdi-square-edit-outline"></i></a>
+                            <a href="javascript:void(0);" class="action-icon"><i class="mdi mdi-delete"></i></a>
+                          </td>
+                        </tr>
+                      {% empty %}
+                        <tr>
+                          <td colspan="5">No payment history available.</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div> <!-- end card-body -->
+            </div> <!-- end card -->
+          </div> <!-- end col -->
+        </div>
+        <!-- end row -->
+      </div> <!-- container -->
+    </div> <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-6">
+            <script>
+              document.write(new Date().getFullYear())
+            </script>© Hyper - Coderthemes.com
+          </div>
+          <div class="col-md-6">
+            <div class="text-md-end footer-links d-none d-md-block">
+              <a href="javascript: void(0);">About</a>
+              <a href="javascript: void(0);">Support</a>
+              <a href="javascript: void(0);">Contact Us</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- end Footer -->
+  </div>
+{% endblock %}

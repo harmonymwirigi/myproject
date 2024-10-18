@@ -1,0 +1,2420 @@
+<?php
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Include shared.php from merch_perfect directory
+require_once __DIR__ . '/../merch/shared.php';
+include '../merch/conn.php';
+ $amount = 0;
+if (isset($_GET['invoice'])) {
+    $invoiceNumber = $_GET['invoice'];  // Get the invoice number from the URL parameters
+
+    // Check if the invoice number is not empty
+    if (empty($invoiceNumber)) {
+        echo "Invoice number is missing!";
+        exit();
+    }
+
+    // Prepare and execute SQL query
+    $sql = "SELECT balance_due FROM invoice WHERE invoice_number = ? LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    
+    // Check if the query was prepared successfully
+    if ($stmt === false) {
+        die("Error preparing the query: " . $conn->error);
+    }
+    
+    $stmt->bind_param("s", $invoiceNumber);
+    
+    // Execute the statement
+    if (!$stmt->execute()) {
+        die("Error executing the query: " . $stmt->error);
+    }
+    
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $invoice = $result->fetch_assoc();
+        $amount = $invoice['balance_due'];  // Fetch the balance (amount) from the result
+         echo "The balance due is: $" . $amount; // Display the amount for testing
+    } else {
+        echo "Invoice not found";
+    }
+    
+    $stmt->close();
+    
+?>
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+
+
+<style> 
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f8f8f8;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.back-icon {
+    width: 24px;
+    height: 24px;
+    fill: #333; /* Icon color */
+}
+
+
+/* Logo container for centering */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* Logo image styling with 10% width and height */
+.logo {
+    width: 10%;
+    height: 10%;
+}
+
+/* Adjusting the invoice-container bottom space */
+.invoice-container {
+    width: 450px;
+    background-color: #ffffff;
+    border-radius: 30px;
+    padding: 15px 20px 10px 20px;
+    text-align: center;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.title-container {
+    position: relative;
+    margin-bottom: 40px;
+}
+
+
+
+
+#invoice-number {
+    position: absolute;
+    top: 0;
+    right: -85px;
+    font-size: 16px;
+    font-weight: 300;
+    padding: 8px;
+    border-radius: 12px;
+    background-color: #ffd939;
+    color: #333333;
+    letter-spacing: 0.5px;
+}
+
+.title-container h1 {
+    font-size: 80px;
+    margin: 0;
+    font-weight: 700;
+    color: #333333;
+    letter-spacing: -7px;
+    font-family: 'Arial Black', Arial, sans-serif;
+}
+
+.title-container .byline {
+    font-size: 14px;
+    color: #333333;
+    margin-top: -5px;
+}
+
+.invoice-details {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.detail-item p {
+    margin: 0;
+    font-size: 16px;
+    color: #a8a8a8;
+    margin-left: 10px;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    fill: #5bd637;
+}
+
+.menu-toggle {
+    display: flex;
+    justify-content: space-between;
+    background-color: #e0e0e0;
+    border-radius: 25px;
+    padding: 5px;
+    position: relative;
+}
+
+.menu-toggle::before {
+    content: '';
+    position: absolute;
+    height: 85%; /* Tighten top and bottom */
+    width: calc(50% - 5px); /* Correct width calculation with padding adjustment */
+    background-color: #ffffff;
+    border-radius: 25px;
+    transition: transform 0.3s ease;
+    z-index: 1;
+}
+
+.menu-toggle button {
+    flex: 1;
+    padding: 10px 0px;
+    background-color: transparent;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666666;
+    position: relative;
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+
+.menu-toggle button.active {
+    color: #333333;
+}
+
+.menu-toggle.active-right::before {
+    transform: translateX(100%);
+}
+
+.invoice-section {
+    margin-top: 30px;
+    text-align: left;
+    border-radius: 30px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    position: absolute;
+    /* width: 100%; */
+    top: 0;
+    left: 0;
+}
+
+.invoice-section.visible {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0); /* Slide in */
+}
+
+.invoice-section.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(-100%); /* Slide out to the left */
+}
+
+/* Styling for the client-info container */
+.client-info {
+    display: flex;
+    flex-direction: column;
+}
+
+#client-name, #invoice-date {
+    font-weight: bold;
+}
+
+.client-info > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+/* Adjusted styling for the order-info container */
+.order-info {
+    background-color: #ebebeb;
+    border-radius: 20px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensures content fills available space */
+    height: 145px;
+    margin-top: 50px;
+}
+
+
+
+
+
+
+/* Styles for the regular balance section */
+#balance-info .balance-amount {
+    background-color: #5bd637;
+    padding: 5px 10px;
+    margin-left: 320px;
+    font-weight: 600;
+    margin-bottom: -5px;
+    border-radius: 20px;
+    position: absolute;
+    font-size: 18px;
+}
+
+#balance-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; /* Align items to the bottom */
+    font-size: 16px;
+    font-weight: bold;
+    height: 100%; /* Ensure it adapts to fill available space */
+    margin-top: auto; /* Push the balance-info to the bottom of order-info */
+    padding-bottom: 10px; /* Add some padding to ensure spacing */
+}
+
+
+
+.scoped-balance #balance-info-scoped {
+    display: inline-flex; /* Keep items in one line */
+    align-items: center; /* Vertically align the text and price */
+    font-size: 14px; /* Smaller text for the label */
+    color: #000; /* Text color */
+    padding: 0; /* Remove extra padding */
+    margin-bottom: 10px; /* Add some space below the balance */
+    font-weight: bold;
+}
+
+/* Scoped styles for the balance amount */
+.scoped-balance .balance-amount {
+  background-color: #5bd637;
+    padding: 4px 8px; /* Reduce padding */
+    font-size: 16px; /* Smaller text for the balance amount */
+    border-radius: 20px; /* Keep the rounded corners */
+    margin-left: 10px; /* Add some space between the text and the balance */
+    font-weight: 600; /* Ensure the price is bold */
+    position: static; /* No absolute positioning */
+}
+
+
+
+#services {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#services-line {
+    border-bottom: 1px solid #333333;
+    margin-bottom: 10px;
+}
+
+#short-desc {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+
+
+/* Styling for the Pay Now button */
+.pay-now {
+    background-color: #333333;
+    color: #ffffff;
+    border: none;
+    padding: 12px 0px;
+    border-radius: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px; /* Keep some space between order-info and the button */
+}
+
+.pay-now:hover {
+    background-color: #555555;
+}
+
+
+
+
+
+
+
+/* Files container styling */
+.files-container {
+    width: 100%;
+    height: 350px;
+    background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 30px;
+    margin-top: 20px;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.files-container.visible {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.files-container.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+/* Lookup form styling */
+.file-lookup {
+    text-align: center;
+    width: 90%;
+    margin-bottom: 15px;
+}
+
+.file-lookup label {
+    font-size: 12px; /* Smaller font size */
+    color: #666;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.lookup-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 8px; /* Reduced gap */
+    width: 100%;
+}
+
+.lookup-inputs input {
+    border: none;
+    border-radius: 6px;
+    padding: 6px;
+    font-size: 12px;
+    width: 100%;
+}
+
+.lookup-inputs .submit-btn {
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px; /* Reduced padding */
+    cursor: pointer;
+}
+
+/* Order number and action buttons */
+.file-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    background-color: #ddd;
+    padding: 10px; /* Reduced padding */
+    border-radius: 15px; /* Slightly smaller radius */
+    width: 90%;
+}
+
+.order-number {
+    font-size: 14px; /* Reduced font size */
+    font-weight: bold;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 6px; /* Reduced gap */
+}
+
+.action-buttons button {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 6px 10px; /* Reduced padding */
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 12px; /* Smaller font */
+}
+
+/* File list styling */
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Reduced gap between file items */
+    width: 90%;
+}
+
+.file-item {
+    background-color: white;
+    padding: 8px; /* Reduced padding */
+    border-radius: 8px; /* Smaller radius */
+    font-size: 12px; /* Reduced font size */
+    color: #333;
+    width: 100%;
+    text-align: center;
+}
+
+
+
+
+
+.checkout-section {
+    display: none;
+    position: sticky;
+    background-color: #f5f5f5;
+    border-radius: 30px;
+    padding: 20px;
+    text-align: center;
+    height: auto;
+    flex-direction: column;
+    margin-top: 30px;
+    justify-content: flex-end;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+
+/* Styling for the top-left button */
+.top-left-btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    padding: 10px 20px;
+    background-color: #333333;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Change button color on hover */
+.top-left-btn:hover {
+    background-color: #555555;
+}
+
+.the-checkout {
+    
+    background-color: #f5f5f5;
+    border-radius: 30px;
+    padding: 20px;
+    text-align: center;
+   
+    flex-direction: column;
+    margin-top: 30px;
+    justify-content: flex-end;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+
+
+
+
+
+
+
+
+.toggle-container {
+    width: 90%;
+    background-color: #eeeeee;
+    border-radius: 30px;
+    overflow: auto;
+    margin: 20px auto;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+    /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); */
+}
+
+.toggle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toggle-icon {
+    flex: 0 0 24px; /* Ensure fixed width and height */
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.size-6 {
+    width: 24px; /* Adjust size as needed */
+    height: 24px; /* Adjust size as needed */
+    stroke: #333; /* Adjust color if needed */
+    transition: transform 0.3s ease;
+}
+
+.ownership-container.expanded .size-6 {
+    transform: rotate(45deg); /* Rotate the icon when the container is expanded */
+    
+}
+
+.ownership-container .selected-option {
+    display: none; /* Hidden by default */
+    padding-left: 50px; /* Indent it like the rest of the content */
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.ownership-container.expanded .selected-option {
+    display: none; /* Keep hidden while expanded */
+}
+
+.ownership-container:not(.expanded) .selected-option {
+    display: block; /* Show when closed */
+    padding: 15px; /* Match the padding of the content */
+    font-size: 14px;
+    color: #333;
+    text-align: left; /* Align the text to the left */
+}
+
+.toggle-title {
+    text-align: left;
+}
+
+.toggle-title p {
+    margin: 0;
+    color: #888;
+    font-size: 12px;
+}
+
+.toggle-content {
+    display: none; /* Hidden by default */
+    padding-top: 10px;
+}
+
+.delivery-option {
+    display: flex;
+    justify-content: space-between;
+    background-color: #ffffff;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+p.think-about {
+    font-size: 12px; /* Smaller font size */
+    color: #777; /* Grey color */
+    text-align: center; /* Optional: center-align the text if needed */
+    margin-top: 10px; /* Add some spacing if needed */
+    line-height: 1.4; /* Adjust line height for readability */
+}
+
+
+/* Styling for the client-info container */
+.client-info {
+    display: flex;
+    flex-direction: column;
+}
+
+#client-name, #invoice-date {
+    font-weight: bold;
+}
+
+.client-info > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.client-input {
+    width: 100%;
+    border: none;
+    font-size: 16px;
+    margin-bottom: 5px;
+    /* padding: 5px 0; */
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    background-color: transparent;
+    border-bottom: 1px solid #eeeeee;
+    outline: none;
+}
+
+.client-input:focus {
+    border-bottom: 1px solid #333; /* Darker bottom border when focused */
+}
+
+.client-input::placeholder {
+    color: #999999; /* Lighter color for the placeholder */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ----------------------- CHOOSE PAYMENT PLAN BUTTON ---------------------*/
+.payment-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Ensures the options are spaced out correctly */
+    gap: 10px; /* Adds a gap between the options */
+}
+
+.payment-option {
+    flex: 30%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    margin: 0px 0px;
+    background-color: #f0f0f0;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.payment-option.active {
+    background-color: black;
+    color: #fff;
+    border: 2px solid blue; /* Add blue border for the active state */
+}
+
+.payment-option .option-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.payment-option .subtext {
+    font-size: 10px;
+    color: #777;
+    margin-top: 5px;
+}
+
+.payment-option .option-price {
+    font-size: 14px;
+    color: #555;
+}
+
+.payment-option:hover {
+    background-color: #303030;
+    color: white;
+}
+
+.payment-option img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    background-color: white;
+    border-radius: 30px;
+}
+
+.payment-icon {
+    width: 10px; /* Adjust size as needed */
+    height: 10px; /* Adjust size as needed */
+    margin-bottom: 10px; /* Space between the icon and the text */
+}
+
+.payment-option .option-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.payment-option .option-description {
+    font-size: 12px;
+    color: #999;
+}
+
+.payment-option:not(.active) .option-price {
+    color: #999;
+}
+
+.payment-option.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.payment-option.clicked {
+    border: 2px solid red;
+}
+
+.payment-option.successfully-clicked {
+    border: 2px solid blue;
+    color: white;
+    background-color: black;
+}
+
+/* ----------------------- PAYMENT SCHEDULE RECTANGLE ---------------------*/
+.payment-schedule-rectangle {
+    background-color: #dddddd;
+    border-radius: 20px;
+    padding: 15px;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: background-color 0.3s, max-height 1s ease, opacity 1s ease;
+    overflow: hidden;
+    opacity: 1;
+    margin: 10px;
+}
+
+.payment-schedule-rectangle.selected {
+    border: 2px solid #529bff; /* Adjust the border color and width as needed */
+}
+
+.payment-schedule-rectangle.expanded {
+    max-height: 500px;
+    opacity: 1;
+    border: 2px solid #529bff;
+}
+
+.payment-schedule-rectangle .service-options-payment-schedule {
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 1s ease, max-height 1s ease;
+    max-height: 0;
+    /* overflow: hidden; */
+}
+
+.payment-schedule-rectangle.expanded .service-options-payment-schedule {
+    opacity: 1;
+    max-height: 500px;
+    z-index: 1;
+    overflow: auto;
+}
+
+.payment-schedule-rectangle .top-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.payment-schedule-rectangle .icon {
+    flex: 0 0 40px;
+    height: 40px;
+    background-color: #c7c7c7;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+.payment-schedule-rectangle .content {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.payment-schedule-rectangle .content .title {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.payment-schedule-rectangle .content .subtext {
+    color: #777;
+}
+
+.payment-schedule-rectangle .toggle-icon {
+    flex: 0 0 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.payment-schedule-rectangle .selected-option {
+    display: none;
+    flex-direction: column;
+}
+
+.payment-schedule-rectangle .selected-option .option-title,
+.payment-schedule-rectangle .selected-option .option-price {
+    font-weight: bold;
+    color: #333;
+}
+
+.payment-schedule-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Ensures the options are spaced out correctly */
+    gap: 10px; /* Adds a gap between the options */
+}
+
+.payment-schedule-option {
+    flex: 25%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+    margin: 0px 0px;
+    background-color: #f0f0f0;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.payment-schedule-option.active {
+    background-color: #000;
+    color: #fff;
+}
+
+.payment-schedule-option .option-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.payment-schedule-option .subtext {
+    font-size: 10px;
+    color: #777;
+    margin-top: 5px;
+}
+
+.payment-schedule-option .option-price {
+    font-size: 14px;
+    color: #555;
+}
+
+.payment-schedule-option:hover {
+    background-color: #e0e0e0;
+    color: #000;
+}
+
+.payment-schedule-option img {
+    width: 24px; /* Adjust the size as needed */
+    height: 24px;
+    margin-right: 10px; /* Adds space between the icon and text */
+}
+
+.payment-schedule-icon {
+    width: 10px; /* Adjust size as needed */
+    height: 10px; /* Adjust size as needed */
+    margin-bottom: 10px; /* Space between the icon and the text */
+}
+
+.payment-schedule-option .option-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.payment-schedule-option .option-description {
+    font-size: 12px;
+    color: #999;
+}
+
+.payment-schedule-option:not(.active) .option-price {
+    color: #999;
+}
+
+.payment-schedule-container {
+    display: flex;
+    flex-direction: column;
+    padding: 7px 32px;
+    z-index: 0;
+    position: relative;
+    overflow: auto;
+   
+}
+
+.payment-schedule-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    position: relative;
+}
+
+.payment-schedule-item::before {
+    content: "";
+    position: absolute;
+    left: -17px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #ddd;
+    z-index: 1;
+}
+
+.payment-schedule-item::after {
+    content: "";
+    position: absolute;
+    left: -23px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #ddd;
+    box-shadow: 0 0 0 2px #fff;
+    z-index: 2; /* Ensure the circle is above the line */
+}
+
+.payment-schedule-item:first-child::after {
+    background: #46ec4c;
+    border-color: #15b81c;
+}
+
+.payment-schedule-item:first-child .payment-due {
+    color: #5e5e5e;
+    font-family: Helvetica Neue;
+    font-weight: bold;
+}
+
+
+.payment-due {
+    flex: 1;
+    color: #777;
+    /* font-weight: bold; */
+    font-size: 14px;
+    padding-left: 20px;
+}
+
+.payment-amount {
+    color: #55a855;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* ----------------------- OWN FILES RECTANGLES ---------------------*/
+
+.own-files-rectangle {
+    background-color: #dddddd;
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: background-color 0.3s, max-height 1s ease, opacity 1s ease;
+    overflow: hidden;
+    max-height: 100px;
+    opacity: 1;
+}
+
+.own-files-rectangle.expanded {
+    max-height: 500px;
+    opacity: 1;
+    border: 2px solid #529bff;
+}
+
+.own-files-rectangle .service-options {
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 1s ease, max-height 1s ease;
+    max-height: 0;
+    overflow: hidden;
+}
+
+.own-files-rectangle.expanded .service-options {
+    opacity: 1;
+    max-height: 500px; /* Adjust as needed */
+}
+
+.own-files-rectangle .top-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.own-files-rectangle .icon {
+    flex: 0 0 40px;
+    height: 40px;
+    background-color: #c7c7c7;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+.own-files-rectangle .content {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.own-files-rectangle .content .title {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.own-files-rectangle .content .subtext {
+    color: #777;
+}
+
+.own-files-rectangle .toggle-icon {
+    flex: 0 0 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.own-files-rectangle .selected-option {
+    display: none;
+    flex-direction: column;
+}
+
+.own-files-rectangle .selected-option .option-title,
+.own-files-rectangle .selected-option .option-price {
+    font-weight: bold;
+    color: #333;
+}
+
+.own-files-rectangle .payment-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Ensures the options are spaced out correctly */
+    gap: 10px; /* Adds a gap between the options */
+}
+
+.own-files-rectangle .payment-option {
+    flex: 25%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+    margin: 0px 0px;
+    background-color: #f0f0f0;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.own-files-rectangle .payment-option.active {
+    background-color: #000;
+    color: #fff;
+}
+
+.own-files-rectangle .payment-option .option-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+    /* margin-left: 10px; */
+}
+
+.own-files-rectangle .payment-option .subtext {
+    font-size: 10px;
+    color: #777;
+    margin-top: 5px;
+}
+
+.own-files-rectangle .payment-option .option-price {
+    font-size: 14px;
+    color: #555;
+}
+
+.own-files-rectangle .payment-option:hover {
+    background-color: #e0e0e0;
+    color: #000;
+}
+
+.own-files-rectangle .payment-option img {
+    width: 24px; /* Adjust the size as needed */
+    height: 24px;
+    margin-right: 10px; /* Adds space between the icon and text */
+}
+
+.own-files-rectangle .payment-icon {
+    width: 10px; /* Adjust size as needed */
+    height: 10px; /* Adjust size as needed */
+    margin-bottom: 10px; /* Space between the icon and the text */
+}
+
+/* Add styles for the icons and other text elements if needed */
+.own-files-rectangle .payment-option .option-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.own-files-rectangle .payment-option .option-description {
+    font-size: 12px;
+    color: #999;
+}
+
+.own-files-rectangle .payment-option:not(.active) .option-price {
+    color: #999;
+}
+
+.rectangle .top-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rectangle .icon {
+    flex: 0 0 40px;
+    height: 40px;
+    background-color: #c7c7c7;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+.rectangle .content {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.rectangle .content .title {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.rectangle .content .subtext {
+    color: #777;
+    font-size: 12px;
+}
+
+.rectangle .toggle-icon {
+    flex: 0 0 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rectangle .selected-option {
+    display: none;
+    flex-direction: column;
+}
+
+.rectangle .selected-option .option-title,
+.rectangle .selected-option .option-price {
+    font-weight: bold;
+    color: #333;
+}
+
+.service-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px; /* Adjusted padding */
+    background-color: #e7e7e7;
+    border-radius: 8px;
+    margin: 6px 0;
+    height: auto;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Ensure no overflow */
+    word-wrap: break-word; /* Allow word breaks */
+}
+
+.service-option .option-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    white-space: normal; /* Ensure text wraps */
+    flex-shrink: 1; /* Allow the text to shrink inside the container */
+}
+
+.service-option .option-price {
+    font-size: 12px;
+    color: #666;
+    white-space: nowrap; /* Prevent price text from wrapping */
+    margin-left: 10px; /* Ensure some space between title and price */
+}
+
+.service-option .subtext {
+    font-size: 10px;
+    color: #888;
+    white-space: normal; /* Ensure subtext wraps */
+    flex-shrink: 1;
+}
+
+@media (max-width: 768px) {
+    .service-option {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .service-option .option-title, .service-option .option-price, .service-option .subtext {
+        text-align: center;
+    }
+}
+
+.selected-option-style {
+    border: 2px solid #529bff;
+    background-color: #f5f5f5;
+}
+
+.emoji {
+    margin-right: 5px;
+    font-size: 18px;
+}
+
+
+.title {
+    font-weight: bold;
+    margin-right: 13px;
+}
+
+.subtext {
+    color: #777;
+}
+
+.price {
+    font-weight: bold;
+    font-size: 13px;
+    align-self: center;
+}
+
+/* ----------------------- OWN FILES RECTANGLES ---------------------*/
+
+
+/* After Care Rectangle */
+.after-care-rectangle {
+    background-color: #dddddd;
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: max-height 1s ease, opacity 1s ease;
+    max-height: 100px; /* Collapsed height */
+    overflow: hidden;
+    margin: 10px;
+}
+
+.after-care-rectangle.selected {
+    border: 2px solid #529bff;
+}
+
+.after-care-rectangle.expanded {
+    max-height: 400px; /* Adjust height to fit content */
+    opacity: 1;
+    border: 2px solid #529bff;
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Service Options */
+.service-options-after-care {
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    max-height: 0;
+    overflow: initial;
+}
+
+.after-care-rectangle.expanded .service-options-after-care {
+    opacity: 1;
+    max-height: none; /* Allow content to grow fully */
+}
+
+/* Individual Service Option */
+.service-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #f0f0f0;
+    border-radius: 12px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+}
+
+.service-option:hover {
+    background-color: #e0e0e0;
+}
+
+/* Service Option Title */
+.service-option .option-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+/* Service Option Price */
+.service-option .option-price {
+    font-size: 16px;
+    color: #333;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.ownership-container {
+    background-color: #e4e4e4;
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    margin: 10px;
+    flex-direction: column;
+    cursor: pointer;
+    transition: background-color 0.3s, max-height 0.5s ease, opacity 0.5s ease;
+    overflow: hidden;
+    max-height: 120px;
+    opacity: 1;
+}
+
+.ownership-container.expanded {
+    max-height: 500px;
+    opacity: 1;
+    border: 2px solid white;
+    transition: background-color 0.3s, max-height 0.5s ease, opacity 0.5s ease;
+}
+
+.ownership-container .top-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ownership-container .icon {
+    flex: 0 0 40px;
+    height: 40px;
+    background-color: #d3d3d3;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+.ownership-container .content {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.ownership-container .content .title {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.ownership-container .content .subtext {
+    color: #777;
+    font-size: 12px;
+}
+
+.ownership-container .toggle-icon {
+    flex: 0 0 24px;
+    height: 24px;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.service-options-ownership {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    max-height: 0;
+    overflow: hidden; /* Ensure smooth transitions */
+}
+
+.ownership-container.expanded .service-options-ownership {
+    opacity: 1;
+    max-height: 500px; /* Adjust this based on the actual content height */
+}
+
+.ownership-option {
+    background-color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.ownership-option > div {
+    display: flex;
+    flex-direction: column; /* Stack title and subtext vertically */
+    align-items: flex-start; /* Align to the left */
+}
+
+.ownership-option:hover {
+    background-color: #e0e0e0;
+}
+
+.option-title {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.option-subtext {
+    font-size: 12px;
+    color: #777; /* Grey color for subtext */
+}
+
+.option-price {
+    font-size: 14px;
+    color: #555;
+    text-align: right; /* Ensures the price remains aligned to the right */
+}
+
+
+
+
+
+
+
+</style>
+
+    
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Wrapping title and details in a header container -->
+        <div class="header">
+            <!-- Title and Invoice Number in its own container -->
+            <div class="title-container">
+               <h1>Invoice <span id="invoice-number"></span></h1>
+               
+                <p class="byline">by Saveyourwork ©</p>
+            </div>
+
+            <!-- Details Section -->
+            <div class="invoice-details">
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="icon">
+                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
+                    </svg>
+                    <p>Pay balances on Invoices & projects</p>
+                </div>
+                <div class="detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="icon">
+                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
+                    </svg>
+                    <p>When order is ready download your files</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- New Menu Container -->
+        <div class="menu">
+            <div class="menu-toggle">
+                <button class="active">Pay Invoice</button>
+                <button>Download Files</button>
+            </div>
+        </div>
+
+<div class="swipe-container">
+        <!-- Updated Invoice Section with client-info and order-info -->
+       <div class="invoice-section">
+            <form id="invoice-form" method="post">
+  <div class="client-info">
+    <div>
+      <!-- Client Name -->
+      <input type="email" id="client-name" name="client-name" placeholder="Client email Here" class="client-input" required>
+      <!-- Invoice Date (readonly) -->
+      <div id="invoice-date">09/29/2024</div>
+    </div>
+    <!-- Client Address -->
+    <input type="text" id="client-address" name="client-address" placeholder="Client Address" class="client-input" required>
+    <!-- Client Contact Info -->
+    <input type="text" id="client-contact" name="client-contact" placeholder="Client Contact Info" class="client-input" required>
+    <input type="hidden" id="invoice-number-input" value="<?php echo $invoiceNumber; ?>" >
+  </div>
+
+            <!-- New Order Info Section -->
+            <div class="order-info">
+                <div id="services">Services:</div>
+                <div id="services-line"></div>
+                <div id="short-desc">Short Desc. :</div>
+         <!-- Regular Balance Section (like in your screenshot) -->
+<div id="balance-info">
+    <span>Balance Due:</span>
+    <span class="balance-amount"  >$ <?php  echo $amount; ?></span> <!-- This will be dynamically updated -->
+</div>
+</div>
+            <button class="pay-now">Pay Now</button>
+        </div>
+        </form>
+        <div class="the-checkout" style="display:none;">
+        <form id="payment-form" >
+            <label for="payment-element"></label>
+            <div id="linkAuthentication"></div>
+            <div id="address-element"></div>
+            <div id="payment-element"></div>
+            <div id="payment-errors" style="width:100%;margin:2px;padding:10px;" role="alert"></div>
+            <button class="pay-now" id="submit" style="width:100%;margin-top:2px;padding:10px;">Pay</button>
+        </form>
+        </div>
+        
+       <!-- Simplified Checkout Section -->
+<div class="checkout-section">
+  
+
+
+
+  <!-- Back button placed inside checkout-section -->
+  <div class="back-button">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="back-icon">
+      <path fill-rule="evenodd" d="M7.28 7.72a.75.75 0 0 1 0 1.06l-2.47 2.47H21a.75.75 0 0 1 0 1.5H4.81l2.47 2.47a.75.75 0 1 1-1.06 1.06l-3.75-3.75a.75.75 0 0 1 0-1.06l3.75-3.75a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
+    </svg>
+  </div>
+
+<h3>Invoice options</h3>
+
+<div class="rectangle ownership-container" onclick="toggleOwnership(this)">
+    <div class="top-content">
+        <div class="icon">📩</div> <!-- Customize the icon as needed -->
+        <div class="content">
+            <div class="title">Your Design Is Yours—But What About the Project Files?</div>
+            <div class="subtext">You’ll receive the final product to use as you wish, you own it, but if you want the complete project / source files that built it, this is your only chance. After your final download, the source files will be automatically deleted unless specified.</div>
+        </div>
+        <div class="selected-option" style="display: none;"></div> <!-- Hidden until a selection is made -->
+        <div class="toggle-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- Expandable options container -->
+    <div class="service-options-ownership">
+        <div class="ownership-option" onclick="uncheckextraserviceinput()">
+            <div>
+
+        
+                
+                <div class="option-title">Instantly delete everything</div>
+                <div class="option-subtext">No ownership rights</div>
+            </div>
+            <div class="option-price">$0</div>
+        </div>
+        <div class="ownership-option" onclick="eighmonthly()">
+            <div>
+                <div class="option-title">We store all your projects and files</div>
+                <div class="option-subtext">Partial rights to the source files</div>
+            </div>
+            <div class="option-price">$8.99 / Month</div>
+            <input type="checkbox" style="display:none;" id="eight-monthly" value="8.99">
+        </div>
+        <div class="ownership-option" onclick="checkextraserviceinput()">
+            <div>
+                <div class="option-title">You own the project / work files</div>
+                <div class="option-subtext">Complete rights to the source files</div>
+                 <input type="checkbox" style="display:none;" id="extra-service" value="100">
+            </div>
+            <div class="option-price" >$100</div>
+        </div>
+       <p class="think-about">✨Think about: is this something I see myself working on or updating in the future in anyway?</p>
+          
+                
+    </div>
+</div>
+
+
+
+<div class="rectangle ownership-container" id="payment-plan" onclick="togglePaymentPlan(this)">
+    <div class="top-content">
+        <div class="icon">💵</div> <!-- Customize the icon as needed -->
+        <div class="content">
+            <div class="title">Pick payment terms that works for you</div>
+            <div class="subtext">If your order meets certain price points new and more payment options will become available.</div>
+        </div>
+        <div class="toggle-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- Expandable options container -->
+    <div class="service-options-ownership service-options-payment-schedule">
+    <div class="payment-options-container">
+        <p>Payment plan options unlock past certain price points</p>
+        <div class="payment-options">
+    <!-- Full price -->
+    <div class="payment-option" data-interval="1">
+        <img src="assets/payupfront.svg" alt="Full price icon">
+        <div id="payment-option-full-upfront">
+            <div class="option-title">Full price</div>
+            <div class="option-price" id="full-price">Pay $400 now</div> <!-- Add ID here -->
+            <div class="subtext">Only 1 payment.</div>
+        </div>
+    </div>
+    
+    <!-- 50% upfront (2 payments) -->
+    <div class="payment-option" data-interval="2">
+        <img src="assets/payin2.svg" alt="50% advance icon">
+        <div id="payment-option-50-upfront">
+            <div class="option-title">50% Upfront</div>
+            <div class="option-price" id="half-price">Pay $200 now</div> <!-- Add ID here -->
+            <div class="subtext">Split into 2 payments.</div>
+        </div>
+    </div>
+    
+    <!-- 33% upfront (3 payments) -->
+    <div class="payment-option" data-interval="3">
+        <img src="assets/payin3.svg" alt="30% advance icon">
+        <div id="payment-option-33-upfront">
+            <div class="option-title">33% Upfront</div>
+            <div class="option-price" id="third-price">Pay $133.33 now</div> <!-- Add ID here -->
+            <div class="subtext">Split into 3 payments.</div>
+        </div>
+    </div>
+    
+    <!-- 25% upfront (4 payments) -->
+    <div class="payment-option" data-interval="4">
+        <img src="assets/payin4.svg" alt="20% advance icon">
+        <div id="payment-option-25-upfront">
+            <div class="option-title">25% Upfront</div>
+            <div class="option-price" id="quarter-price">Pay $100 now</div> <!-- Add ID here -->
+            <div class="subtext">Split into 4 payments.</div>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Hidden input to store the selected interval -->
+<input type="hidden" id="selected-interval" value="1"> <!-- Default is full payment (1 interval) -->
+
+</div>
+<!-- Scoped Balance Section (styled differently but same content) -->
+<div class="scoped-balance">
+    <div id="balance-info-scoped">
+        Current Balance Due: <span class="balance-amount"  id="current-amount"><?php echo $amount; ?></span></div>
+</div>
+
+    <button class="pay-now" id="calculate-total">Proceed to Checkout</button>
+</div>
+ </div>
+
+        <!-- Files container remains unchanged -->
+        <div class="files-container">
+            <div class="file-lookup">
+                <label for="order-search">Enter your email address and your order # to quickly look up your files.</label>
+                <div class="lookup-inputs">
+                    <input type="text" id="order-search" placeholder="Order #">
+                    <button class="submit-btn">Submit</button>
+                </div>
+            </div>
+
+            <div class="file-details">
+                <div class="order-number">
+                    <span>OR.#00691</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="request-btn">Request Revision</button>
+                    <button class="download-btn">Download</button>
+                </div>
+            </div>
+
+            <div class="file-list">
+                <div class="file-item">Artboard 1.png</div>
+                <div class="file-item">Artboard 2.png</div>
+                <div class="file-item">Project File.psd</div>
+            </div>
+        </div>
+
+        <div class="logo-container">
+            <img src="logo.png" alt="Logo" class="logo">
+        </div>
+    </div>
+</body>
+<?php
+} else {
+    echo "No invoice number provided!";
+}
+?>
+</html>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="paymentstyles.css" />
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="utils.js"></script>
+    <script>
+<script>
+function toggleSection() {
+  const content = document.getElementById("toggleContent");
+  content.style.display = content.style.display === "none" || content.style.display === "" ? "block" : "none";
+}
+</script>
+
+
+<script>
+// Initially hide the checkout section
+document.querySelector('.checkout-section').style.display = 'none';
+
+// Function to show the checkout section and hide the invoice section
+function showCheckoutSection() {
+    const invoiceSection = document.querySelector('.invoice-section');
+    const checkoutSection = document.querySelector('.checkout-section');
+
+    // Hide invoice section and show checkout section
+    invoiceSection.style.display = 'none';
+    checkoutSection.style.display = 'flex'; // Use flex as it's already flex-based
+}
+
+function removeCheckoutSection(){
+    const invoiceSection = document.querySelector('.invoice-section');
+    const checkoutSection = document.querySelector('.checkout-section');
+
+    // Hide invoice section and show checkout section
+    invoiceSection.style.display = 'none';
+    checkoutSection.style.display = 'none'; // Use flex as it's already flex-based
+}
+
+// Function to show the invoice section and hide the checkout section
+function showInvoiceSection() {
+    const invoiceSection = document.querySelector('.invoice-section');
+    const checkoutSection = document.querySelector('.checkout-section');
+
+    // Hide checkout section and show invoice section
+    checkoutSection.style.display = 'none';
+    invoiceSection.style.display = 'flex';
+}
+
+// Attach the click event to the "Pay Now" button
+// document.querySelector('.pay-now').addEventListener('click', showCheckoutSection);
+
+// Attach the click event to the back button (SVG)
+document.querySelector('.back-button').addEventListener('click', showInvoiceSection);
+</script>
+
+
+
+
+<script>
+function checkextraserviceinput() {
+    // Get the extra-service checkbox
+    const extraServiceCheckbox = document.getElementById('extra-service');
+    
+    // Ensure that the checkbox is always checked, regardless of how many times the function is called
+    extraServiceCheckbox.checked = true;
+    const monthly = document.getElementById('eight-monthly');
+    monthly.checked = false;
+
+    // Optionally, add visual feedback when the checkbox is checked
+    const ownershipOption = document.querySelector('.ownership-option');
+    ownershipOption.classList.add('selected'); // Add a class to indicate it's selected
+
+    // Update payment options after the checkbox is checked
+    updatePaymentOptions();
+}
+function eighmonthly(){
+    // Get the extra-service checkbox
+    const extraServiceCheckbox = document.getElementById('extra-service');
+    
+    // Ensure that the checkbox is always unchecked, regardless of how many times the function is called
+    extraServiceCheckbox.checked = false;
+    const monthly = document.getElementById('eight-monthly');
+    monthly.checked = true;
+    // Optionally, add visual feedback when the checkbox is checked
+    const ownershipOption = document.querySelector('.ownership-option');
+    ownershipOption.classList.add('selected'); // Add a class to indicate it's selected
+
+    // Update payment options after the checkbox is checked
+    updatePaymentOptions();
+}
+
+function uncheckextraserviceinput() {
+    // Get the extra-service checkbox
+    const extraServiceCheckbox = document.getElementById('extra-service');
+    
+    // Ensure that the checkbox is always unchecked, regardless of how many times the function is called
+    extraServiceCheckbox.checked = false;
+
+    const monthly = document.getElementById('eight-monthly');
+    monthly.checked = false;
+
+
+    // Optionally, remove the visual feedback when the checkbox is unchecked
+    const ownershipOption = document.querySelector('.ownership-option');
+    ownershipOption.classList.remove('selected'); // Remove the class that indicates it's selected
+
+    // Update payment options after the checkbox is unchecked
+    updatePaymentOptions();
+}
+
+
+// Initially hide the checkout section
+document.querySelector('.checkout-section').style.display = 'none';
+
+// Function to show the checkout section and hide the invoice section
+function showCheckoutSection() {
+    const invoiceSection = document.querySelector('.invoice-section');
+    const checkoutSection = document.querySelector('.checkout-section');
+
+    // Hide invoice section and show checkout section
+    invoiceSection.style.display = 'none';
+    checkoutSection.style.display = 'flex'; // Use flex as it's already flex-based
+
+    // Optional: Smooth scrolling effect or any other transition can be added here
+}
+document.querySelectorAll('.payment-option').forEach(option => {
+    option.addEventListener('click', function() {
+        // Get the interval from the data attribute
+        const interval = this.getAttribute('data-interval');
+        
+        // Set the hidden input value to the selected interval
+        document.getElementById('selected-interval').value = interval;
+
+        // Highlight the selected option visually (optional)
+        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+        this.classList.add('selected');
+    });
+});
+
+
+
+document.getElementById('calculate-total').addEventListener('click', function(event) {
+    // Check if a payment option is selected
+    const selectedOption = document.querySelector('.payment-option.selected'); // Check if any option is marked as selected
+    if (!selectedOption) {
+        // No option selected, prevent the form submission
+        event.preventDefault();
+        alert('Please select a payment option before proceeding to checkout.');
+        return; // Exit early if no option is selected
+    }
+
+    // Get the selected interval and the base amount
+    const selectedInterval = selectedOption.getAttribute('data-interval');
+    const baseAmount = <?php echo $amount * 100; ?>; // Base amount in cents
+    const invoiceNumber = '<?php echo $invoiceNumber; ?>'; // Get the invoice number
+    const clientEmail = document.getElementById('client-name').value; // Correct the element ID for client email
+
+    // Check if extra service is selected
+    const extraService = document.getElementById('extra-service').checked;
+    let totalAmount = baseAmount;
+    if (extraService) {
+        totalAmount += 10000; // Add $100 (in cents)
+    }
+
+    // Calculate the amount per interval
+    const intervalAmount = Math.ceil(totalAmount / selectedInterval);
+
+    // Make an AJAX request to create the PaymentIntent with the selected interval and client email
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "create_payment_intent.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    // Prepare the data to send (include the selected interval and client email)
+    const data = `amount=${intervalAmount}&intervals=${selectedInterval}&invoice_number=${invoiceNumber}&client_email=${encodeURIComponent(clientEmail)}`;
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const paymentIntent = JSON.parse(xhr.responseText);
+            // Show the checkout form and handle payment with Stripe
+            document.querySelector('.the-checkout').style.display = 'block';
+
+            // Initialize Stripe payment with the client secret
+            initializeStripe(paymentIntent.clientSecret);
+        } else {
+            alert('Failed to create PaymentIntent.');
+        }
+    };
+
+    // Send the data to the backend
+    xhr.send(data);
+});
+
+
+// Add an event listener for payment options to mark the selected option
+document.querySelectorAll('.payment-option').forEach(option => {
+    option.addEventListener('click', function() {
+        // Remove the 'selected' class from all payment options
+        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+
+        // Add the 'selected' class to the clicked option
+        this.classList.add('selected');
+    });
+});
+
+
+function initializeStripe(clientSecret) {
+    removeCheckoutSection();
+    const stripe = Stripe('<?= $_ENV["STRIPE_PUBLISHABLE_KEY"]; ?>'); // Replace with your Stripe publishable key
+    const elements = stripe.elements({clientSecret}); // Pass clientSecret here
+
+    // Create and mount the payment element
+    const paymentElement = elements.create('payment');
+    paymentElement.mount('#payment-element');
+
+    // Handle the form submission
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                return_url: 'https://www.saveyourwork.net/merch/return.php',
+            },
+        });
+
+        if (error) {
+            document.getElementById('payment-errors').textContent = error.message;
+        }
+    });
+}
+
+
+// Attach the click event to the "Pay Now" button
+// document.querySelector('.pay-now').addEventListener('click', showCheckoutSection);
+</script>
+
+
+<script>
+   // Get the elements
+const payInvoiceButton = document.querySelector('.menu-toggle button:nth-child(1)');
+const downloadFilesButton = document.querySelector('.menu-toggle button:nth-child(2)');
+const invoiceSection = document.querySelector('.invoice-section');
+const filesContainer = document.querySelector('.files-container');
+const menuToggle = document.querySelector('.menu-toggle');
+
+// Function to show the invoice section and hide the files container
+function showInvoiceSection() {
+    invoiceSection.style.visibility = 'visible';
+    invoiceSection.style.opacity = '1';
+    invoiceSection.style.position = 'relative';  // Ensure it's part of the document flow
+    
+    filesContainer.style.visibility = 'hidden';
+    filesContainer.style.opacity = '0';
+    filesContainer.style.position = 'absolute';  // Take it out of the document flow
+
+    // Set active class for the selected menu option
+    payInvoiceButton.classList.add('active');
+    downloadFilesButton.classList.remove('active');
+    
+    // Move the slider background to the left
+    menuToggle.classList.remove('active-right');
+}
+
+
+// Function to show the files container and hide the invoice section
+function showFilesContainer() {
+    filesContainer.style.visibility = 'visible';
+    filesContainer.style.opacity = '1';
+    filesContainer.style.position = 'relative';  // Make it part of the document flow
+
+    invoiceSection.style.visibility = 'hidden';
+    invoiceSection.style.opacity = '0';
+    invoiceSection.style.position = 'absolute';  // Take it out of the document flow
+
+    // Set active class for the selected menu option
+    downloadFilesButton.classList.add('active');
+    payInvoiceButton.classList.remove('active');
+    
+    // Move the slider background to the right
+    menuToggle.classList.add('active-right');
+}
+
+// Attach event listeners to buttons
+payInvoiceButton.addEventListener('click', showInvoiceSection);
+downloadFilesButton.addEventListener('click', showFilesContainer);
+
+// Initially show only the invoice section
+showInvoiceSection();
+</script>
+
+
+
+
+
+
+<script>
+   function toggleOwnership(element) {
+    element.classList.toggle('expanded');
+    
+    // Check if the rectangle is expanded or collapsed
+    if (!element.classList.contains('expanded')) {
+        const selectedOption = element.querySelector('.ownership-option.selected');
+        
+        // If an option was selected, display it in the closed state
+        if (selectedOption) {
+            const selectedTitle = selectedOption.querySelector('.option-title').textContent;
+            const selectedSubtext = selectedOption.querySelector('.option-subtext').textContent;
+            const selectedPrice = selectedOption.querySelector('.option-price').textContent;
+            
+            const titleElement = element.querySelector('.title');
+            const subtextElement = element.querySelector('.subtext');
+            
+            // Replace the title and subtext with the selected option's content
+            titleElement.innerHTML = selectedTitle;
+            subtextElement.innerHTML = selectedSubtext;
+
+            // Add price element dynamically
+            let priceDiv = element.querySelector('.price');
+            if (!priceDiv) {
+                priceDiv = document.createElement('div');
+                priceDiv.classList.add('price');
+                element.querySelector('.content').appendChild(priceDiv);
+            }
+            priceDiv.innerHTML = selectedPrice;
+            priceDiv.style.display = 'block'; // Show the price
+
+            // Change border to soft green when selection is made
+            element.style.border = '1px solid #5bd637'; // Light green border
+        } else {
+            // If no selection is made, hide the closed state and reset border
+            const closedContent = element.querySelector('.selected-option');
+            closedContent.style.display = 'none';
+            element.style.border = ''; // Reset the border
+        }
+    } else {
+        // If the container is expanded, reset the title, subtext, and border to the original content
+        const titleElement = element.querySelector('.title');
+        const subtextElement = element.querySelector('.subtext');
+        const priceDiv = element.querySelector('.price');
+
+        // Original content for the closed state
+        titleElement.innerHTML = "Your Design Is Yours—But What About the Project Files?";
+        subtextElement.innerHTML = "You’ll receive the final product to use as you wish, you own it, but if you want the complete project / source files that built it, this is your only chance. After your final download, the source files will be automatically deleted unless specified.";
+
+        if (priceDiv) {
+            priceDiv.style.display = 'none'; // Hide the price when expanded
+        }
+
+        // Reset the border
+        element.style.border = ''; // Remove the highlighted green border when expanded
+    }
+}
+
+// Add event listeners to ownership options
+document.querySelectorAll('.ownership-option').forEach(option => {
+    option.addEventListener('click', function() {
+        // Remove 'selected' class from all options
+        document.querySelectorAll('.ownership-option').forEach(opt => {
+            opt.classList.remove('selected');
+            opt.style.border = ''; // Remove border from other options
+        });
+        
+        // Add 'selected' class to the clicked option
+        this.classList.add('selected');
+        this.style.border = '1px solid #5bd637'; // Apply green border to the selected option
+        
+        // Optional: close the rectangle after a selection is made
+        const rectangle = this.closest('.ownership-container');
+        rectangle.classList.remove('expanded');
+        toggleOwnership(rectangle);
+    });
+});
+function updatePaymentOptions() {
+    // Base amount in dollars
+    let baseAmount = <?php echo $amount; ?>; // You can replace this with PHP: <?php echo $amount; ?>
+
+    // Check if the extra service is selected eight-monthly
+    const extraService = document.getElementById('extra-service').checked;
+    const monthlyservice = document.getElementById('eight-monthly').checked;
+    if (monthlyservice) {
+        baseAmount += 8.99;
+    }
+    if (extraService) {
+        baseAmount += 100; // Add $100 for the extra service
+    }
+
+    document.getElementById('current-amount').textContent = `$${baseAmount}`;
+
+    // Calculate the payment options
+    const fullPayment = baseAmount;
+    const halfPayment = (baseAmount / 2).toFixed(2); // 50%
+    const thirdPayment = (baseAmount / 3).toFixed(2); // 33%
+    const quarterPayment = (baseAmount / 4).toFixed(2); // 25%
+
+    // Update the HTML for the payment options
+    document.getElementById('full-price').textContent = `Pay $${fullPayment} now`;
+    document.getElementById('half-price').textContent = `Pay $${halfPayment} now`;
+    document.getElementById('third-price').textContent = `Pay $${thirdPayment} now`;
+    document.getElementById('quarter-price').textContent = `Pay $${quarterPayment} now`;
+
+    // Add event listeners to update the scoped balance based on the selected payment option
+    document.querySelectorAll('.payment-option').forEach(option => {
+        option.addEventListener('click', function() {
+            // Get the interval from the data attribute
+            const interval = this.getAttribute('data-interval');
+            let selectedAmount = baseAmount;
+
+            // Update the selectedAmount based on the interval
+            if (interval == 1) {
+                selectedAmount = fullPayment;
+            } else if (interval == 2) {
+                selectedAmount = halfPayment;
+            } else if (interval == 3) {
+                selectedAmount = thirdPayment;
+            } else if (interval == 4) {
+                selectedAmount = quarterPayment;
+            }
+
+            // Update the scoped balance 
+            document.querySelector('.balance-amount').textContent = `$${selectedAmount}`;
+            document.getElementById('current-amount').textContent = `$${selectedAmount}`;
+        });
+    });
+}
+
+// Call the function to update prices initially and whenever the extra service is checked/unchecked
+document.getElementById('extra-service').addEventListener('change', updatePaymentOptions);
+
+// Initial call to set the correct prices on page load
+updatePaymentOptions();
+</script>
+
+
+
+
+
+
+
+<script>
+// Function to get URL parameters
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+// Display the invoice number and balance on the /pay-invoice page
+window.addEventListener('DOMContentLoaded', function() {
+    const invoiceNumber = getQueryParam('invoice');
+    const balanceAmount = getQueryParam('balance');
+
+    // Display values on the invoice page
+    document.getElementById('invoice-number').textContent = '#' + invoiceNumber;
+
+    // Update all balance amount elements (scoped and non-scoped)
+    const balanceElements = document.querySelectorAll('.balance-amount');
+    balanceElements.forEach(el => {
+        el.textContent = '$' + balanceAmount;
+    });
+
+    // Check if balance is $400 or more, then show payment plan rectangle
+    const paymentPlanContainer = document.getElementById('payment-plan');
+    if (parseFloat(balanceAmount) >= 400) {
+        paymentPlanContainer.style.display = 'block'; // Show payment plan
+    } else {
+        paymentPlanContainer.style.display = 'none'; // Hide payment plan
+    }
+});
+
+// Function to toggle the payment plan rectangle
+function togglePaymentPlan(element) {
+    element.classList.toggle('expanded');
+
+    const paymentOptions = element.querySelector('.service-options-payment-schedule');
+
+    // Check if the rectangle is expanded or collapsed
+    if (element.classList.contains('expanded')) {
+        paymentOptions.style.maxHeight = paymentOptions.scrollHeight + 'px'; // Expand
+    } else {
+        paymentOptions.style.maxHeight = '0'; // Collapse
+    }
+}
+
+// Add event listeners to payment options specifically in the payment-plan section
+document.querySelectorAll('#payment-plan .payment-option').forEach(option => {
+    option.addEventListener('click', function() {
+        // Remove 'selected' class from all options
+        document.querySelectorAll('#payment-plan .payment-option').forEach(opt => {
+            opt.classList.remove('selected');
+            opt.style.border = ''; // Remove border from other options
+        });
+
+        // Add 'selected' class to the clicked option
+        this.classList.add('selected');
+        this.style.border = '1px solid #5bd637'; // Apply green border to the selected option
+
+        // Close the rectangle after a selection is made
+        const rectangle = this.closest('.ownership-container');
+        rectangle.classList.remove('expanded');
+        togglePaymentPlan(rectangle); // Trigger the toggle function after closing
+
+        // Apply green border to the entire payment plan rectangle
+        rectangle.style.border = '1px solid #5bd637'; // Ensure the entire container gets the border
+    });
+});
+</script>
+
+
+<script>
+// Function to handle form validation
+function validateForm(event) {
+    // Prevent the default form submission
+    event.preventDefault();
+
+    // Get the client input fields
+    const clientName = document.getElementById('client-name');
+    const clientAddress = document.getElementById('client-address');
+    const clientContact = document.getElementById('client-contact');
+    const invoiceid = document.getElementById('invoice-number-input').value;
+    const payNowButton = document.querySelector('.pay-now');
+
+    // Check if all fields are filled
+    let isValid = true;
+
+    // Helper function to add shaking and red highlight
+    function triggerWarning(inputElement) {
+        inputElement.style.borderColor = 'red'; // Red border
+        inputElement.classList.add('shake');    // Add shake effect
+        setTimeout(() => {
+            inputElement.style.borderColor = ''; // Reset border color
+            inputElement.classList.remove('shake'); // Remove shake effect
+        }, 3000); // 3 seconds
+    }
+
+    // Validate client name
+    if (clientName.value.trim() === '') {
+        triggerWarning(clientName);
+        isValid = false;
+    }
+
+    // Validate client address
+    if (clientAddress.value.trim() === '') {
+        triggerWarning(clientAddress);
+        isValid = false;
+    }
+
+    // Validate client contact info
+    if (clientContact.value.trim() === '') {
+        triggerWarning(clientContact);
+        isValid = false;
+    }
+
+    // If any field is invalid, trigger the pay now button shake and red effect
+    if (!isValid) {
+        payNowButton.style.backgroundColor = 'red'; // Turn button red
+        payNowButton.classList.add('shake'); // Add shake effect
+        setTimeout(() => {
+            payNowButton.style.backgroundColor = ''; // Reset button color
+            payNowButton.classList.remove('shake'); // Remove shake effect
+        }, 3000); // 3 seconds
+    } else {
+        // Proceed with AJAX request to update the invoice
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "update_invoice.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        // Prepare the data to send
+        const data = `invoiceid=${encodeURIComponent(invoiceid)}&clientname=${encodeURIComponent(clientName.value)}&clientaddress=${encodeURIComponent(clientAddress.value)}&clientcontact=${encodeURIComponent(clientContact.value)}`;
+
+        // Set up the callback for the AJAX request
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                // If the update was successful, proceed to payment
+                alert("Invoice updated! Proceed to payment.");
+                showCheckoutSection();
+                // Here you can redirect to the payment page or trigger the payment flow
+            } else {
+                // Handle any errors that occur during the request
+                alert("Failed to update the invoice. Please try again.");
+            }
+        };
+
+        // Send the AJAX request with the form data
+        xhr.send(data);
+    }
+}
+
+// Add the event listener to the "Pay Now" button
+document.querySelector('.pay-now').addEventListener('click', validateForm);
+</script>
+
+
+<style>
+/* Shake animation */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    20%, 60% {
+        transform: translateX(-10px);
+    }
+    40%, 80% {
+        transform: translateX(10px);
+    }
+}
+
+/* Add shake class */
+.shake {
+    animation: shake 0.5s;
+}
+</style>
+
+
+
+
+<script>
+// Function to get URL parameters
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+// Display the invoice number and balance on the /pay-invoice page
+window.addEventListener('DOMContentLoaded', function() {
+    const invoiceNumber = getQueryParam('invoice');
+    const balanceAmount = getQueryParam('balance');
+
+    // Display values on the invoice page
+    document.getElementById('invoice-number').textContent = '#' + invoiceNumber;
+
+    // Update all balance amount elements (scoped and non-scoped)
+    const balanceElements = document.querySelectorAll('.balance-amount');
+    balanceElements.forEach(el => {
+        el.textContent = '$' + balanceAmount;
+    });
+});
+</script>
+
+
+
+

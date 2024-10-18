@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Project Calendar</title>
+  </head>
+  <body>
+    <h1>Editable Calendar for {{ project.name }}</h1>
+
+    <!-- Form for submitting the input changes -->
+    <form method="post">
+      {% csrf_token %}
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Team Lead</th>
+            {% for date in date_range %}
+            <th>{{ date }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for team_lead, values in calendar_data.items %}
+          <tr>
+            <td>{{ team_lead }}</td>
+            {% for value in values %}
+            <td>
+              <!-- Create an input field for each value -->
+              <input
+                type="number"
+                name="calendar_{{ team_lead }}_{{ forloop.counter0 }}"
+                value="{{ value }}"
+                min="0"
+                max="1"
+              />
+            </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Submit Button -->
+      <button type="submit">Save Changes</button>
+    </form>
+  </body>
+</html>

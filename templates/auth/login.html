@@ -1,0 +1,78 @@
+{% extends 'auth/base.html' %}
+{% load static %}
+
+{% block main %}
+  <body class="authentication-bg position-relative">
+    <div class="position-absolute start-0 end-0 start-0 bottom-0 w-100 h-100"></div>
+    <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5 position-relative">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-xxl-4 col-lg-5">
+            <div class="card">
+              <!-- Logo -->
+              <div class="card-header py-4 text-center bg-primary">
+                <a href="index.html"><span><img src="{% static 'assets/images/dsslogo.png' %}" alt="logo" height="22" /></span></a>
+              </div>
+
+              <div class="card-body p-4">
+                <!-- Display Messages Here -->
+                {% if messages %}
+                  <div class="alert-container">
+                    {% for message in messages %}
+                      <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                <div class="text-center w-75 m-auto">
+                  <h4 class="text-dark-50 text-center pb-0 fw-bold">Sign In</h4>
+                </div>
+
+                <form method="POST" action="{% url 'login' %}">
+                  {% csrf_token %}
+                  {{ form.non_field_errors }} <!-- Renders form-wide errors -->
+
+                  <div class="mb-3">{{ form.username.label_tag }}
+                    {{ form.username }}
+                    {{ form.username.errors }}</div>
+
+                  <div class="mb-3">{{ form.password.label_tag }}
+                    {{ form.password }}
+                    {{ form.password.errors }}</div>
+
+                  <div class="mb-3 text-center">
+                    <button class="btn btn-primary" type="submit">Login</button>
+                  </div>
+
+                  <div class="text-center">
+                    <p>
+                      Don't have an account? <a href="{% url 'register' %}">Sign up</a>
+                    </p>
+                  </div>
+                </form>
+              </div> <!-- end card-body -->
+            </div>
+            <!-- end card -->
+          </div> <!-- end col -->
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- end container -->
+    </div>
+    <!-- end page -->
+
+    <footer class="footer footer-alt">
+      <!-- 2018 -->
+      <script>
+        document.write(new Date().getFullYear())
+      </script> <!-- © Hyper - Coderthemes.com -->
+    </footer>
+    <!-- Vendor js -->
+    <script src="assets/js/vendor.min.js"></script>
+    <!-- App js -->
+    <script src="assets/js/app.min.js"></script>
+  </body>
+{% endblock %}

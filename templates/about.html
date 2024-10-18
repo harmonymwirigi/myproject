@@ -1,0 +1,46 @@
+{% extends 'landingbase.html' %}
+{% load static %}
+
+{% block main %}
+  <!-- About Us Section -->
+  <section class="about-section" style="background-color: #f5f5f5; padding: 60px 0;">
+    <div class="container">
+      <!-- Section Title -->
+      <h2 class="section-title text-center" style="font-family: 'Montserrat', sans-serif; color: #333; font-size: 36px; font-weight: 600; margin-bottom: 40px;">About Us</h2>
+
+      <div class="about-content row align-items-center">
+        <!-- Who We Are -->
+        <div class="col-md-6 text-center mb-4">
+          <i class="fas fa-users about-icon" style="font-size: 50px; color: #007bff;"></i>
+          <h3 class="about-subtitle" style="font-family: 'Montserrat', sans-serif; color: #007bff; font-size: 24px; margin-top: 20px;">Who We Are?</h3>
+          <p class="about-text" style="font-family: 'Open Sans', sans-serif; font-size: 16px; color: #555; line-height: 1.8; text-align: justify; padding: 0 20px;">At DSS, we are a team of experienced researchers and industry professionals dedicated to developing advanced project scheduling and resource optimization solutions. Our expertise spans various domains, including construction, workforce management, equipment allocation, and project planning. By combining years of practical experience with cutting-edge research, we create adaptable, user-friendly software that addresses the complex scheduling and resource challenges faced by modern industries. Our mission is to equip organizations with the tools they need to streamline operations, optimize resource allocation, and deliver projects on time and within budget.</p>
+        </div>
+        <div class="col-md-6 mb-4 text-center">
+          <img src="{% static 'assets/images/picture_4.jpg' %}" alt="Who We Are" class="about-img img-fluid rounded" style="max-height: 300px;" />
+        </div>
+
+        <!-- What We Do -->
+        <div class="col-md-6 order-md-2 text-center mb-4">
+          <img src="{% static 'assets/images/picture_5.png' %}" alt="What We Do" class="about-img img-fluid rounded" style="max-width: 80%;" />
+        </div>
+        <div class="col-md-6 order-md-1 text-center mb-4">
+          <i class="fas fa-briefcase about-icon" style="font-size: 50px; color: #007bff;"></i>
+          <h3 class="about-subtitle" style="font-family: 'Montserrat', sans-serif; color: #007bff; font-size: 24px; margin-top: 20px;">What We Do?</h3>
+          <h2 style="font-family: 'Montserrat', sans-serif; color: #333; font-size: 28px; margin-top: 10px;">Our Expertise:</h2>
+          <p class="about-text" style="font-family: 'Open Sans', sans-serif; font-size: 16px; color: #555; line-height: 1.8; text-align: justify; padding: 0 20px;">Good plans usually require balancing business objectives like efficiency, cost, and service level. Managing resources such as people, fuel, and materials without violating rules or business constraints is essential. There isn’t always a single perfect plan, so testing and comparing different scenarios is often necessary. Once you select a plan, explaining your choice to stakeholders is crucial.</p>
+          <p class="about-text" style="font-family: 'Open Sans', sans-serif; font-size: 16px; color: #555; line-height: 1.8; text-align: justify; padding: 0 20px;">That’s where Decision Support System (DSS) comes in. We bridge the gap between efficiency and adaptability, ensuring your planning is robust, explainable, and responsive. Our customized optimization solutions cater to:</p>
+        </div>
+
+        <!-- How We Do It -->
+        <div class="col-md-6 text-center mb-4">
+          <i class="fas fa-cogs about-icon" style="font-size: 50px; color: #007bff;"></i>
+          <h3 class="about-subtitle" style="font-family: 'Montserrat', sans-serif; color: #007bff; font-size: 24px; margin-top: 20px;">How We Do It?</h3>
+          <p class="about-text" style="font-family: 'Open Sans', sans-serif; font-size: 16px; color: #555; line-height: 1.8; text-align: justify; padding: 0 20px;">We have developed our solution using a series of sophisticated and advanced technologies such as Optimization, Genetic Algorithms (GA), and Heuristics to deliver the best possible optimal solutions for your Projects Planning.</p>
+        </div>
+        <div class="col-md-6 text-center mb-4">
+          <img src="{% static 'assets/images/picture_6.jpg' %}" alt="How We Do It" class="about-img img-fluid rounded" style="max-width: 80%;" />
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

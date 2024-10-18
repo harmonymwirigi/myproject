@@ -1,0 +1,73 @@
+{% extends 'landingbase.html' %}
+{% load static %}
+
+{% block main %}
+  <!-- START PRICING -->
+  <section class="py-5 bg-light-lighten border-top border-bottom border-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="text-center">
+            <h1 class="mt-0"><i class="mdi mdi-tag-multiple"></i></h1>
+            <h3>Cloud-Powered <span class="text-primary">Performance</span></h3>
+            <p class="text-muted mt-2">
+              Enjoy seamless performance with our SaaS platform, accessible from anywhere. No installation needed—simply log in and start optimizing.<br />Scalable to handle growing project portfolios.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5 pt-3" style="background-color: #f5f5f5; padding: 40px 0;">
+        <div class="col-md-4">
+          <div class="card card-pricing" style="background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border: none;">
+            <div class="card-body text-center">
+              <p class="card-pricing-plan-name fw-bold text-uppercase" style="font-family: 'Montserrat', sans-serif; font-size: 18px; color: #007bff;">Free Trial</p>
+              <i class="card-pricing-icon ri-user-line text-primary" style="font-size: 40px;"></i>
+              <h2 class="card-pricing-price" style="font-family: 'Montserrat', sans-serif; color: #333333; font-size: 28px;">$0 <span style="font-size: 16px;">/ for one week</span></h2>
+              <ul class="card-pricing-features" style="font-family: 'Open Sans', sans-serif; color: #555555; font-size: 16px; padding: 0;">
+                <li>Explore our software for free for a limited time</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- end col -->
+
+        <div class="col-md-4">
+          <div class="card card-pricing card-pricing-recommended" style="background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border: none;">
+            <div class="card-body text-center">
+              <p class="card-pricing-plan-name fw-bold text-uppercase" style="font-family: 'Montserrat', sans-serif; font-size: 18px; color: #007bff;">Universal Plan</p>
+              <i class="card-pricing-icon ri-briefcase-line text-primary" style="font-size: 40px;"></i>
+              <h2 class="card-pricing-price" style="font-family: 'Montserrat', sans-serif; color: #333333; font-size: 28px;">$49 <span style="font-size: 16px;">/ month</span></h2>
+              <ul class="card-pricing-features" style="font-family: 'Open Sans', sans-serif; color: #555555; font-size: 16px; padding: 0;">
+                <li>Everything you need to manage and optimize your projects and resources</li>
+                <li>Discuss your project size & scope, and get a customized quote</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- end col -->
+
+        <div class="col-md-4">
+          <div class="card card-pricing" style="background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border: none;">
+            <div class="card-body text-center">
+              <p class="card-pricing-plan-name fw-bold text-uppercase" style="font-family: 'Montserrat', sans-serif; font-size: 18px; color: #007bff;">Customize Plan</p>
+              <i class="card-pricing-icon ri-store-2-line text-primary" style="font-size: 40px;"></i>
+              <h2 class="card-pricing-price" style="font-family: 'Montserrat', sans-serif; color: #333333; font-size: 28px;">Contact us</h2>
+              <ul class="card-pricing-features" style="font-family: 'Open Sans', sans-serif; color: #555555; font-size: 16px; padding: 0;">
+                <li>Customize the software based on your requirements</li>
+                <li>Consultancy services included</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- end col -->
+      </div>
+
+      <p class="mb-4 font-16 text-black-50">Call-to-Action (CTA): Sign Up for Free Trial | Start Optimizing Your Project Planning Now”</p>
+
+      <a href="{% url 'login' %}" class="btn btn-lg font-16 btn-success">Login <i class="mdi mdi-arrow-right ms-1"></i></a>
+      <a href="{% url 'register' %}" class="btn btn-lg font-16 btn-info">Sign Up</a>
+    </div>
+  </section>
+  <!-- END PRICING -->
+{% endblock %}

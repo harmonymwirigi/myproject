@@ -1,0 +1,102 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+  <div class="content-page">
+    <div class="content">
+      <!-- Start Content -->
+      <div class="container-fluid">
+        <!-- start page title -->
+        <div class="row">
+          <div class="col-12">
+            <div class="page-title-box">
+              <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                  <li class="breadcrumb-item">
+                    <a href="javascript: void(0);">DSS</a>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <a href="javascript: void(0);">Projects</a>
+                  </li>
+                  <li class="breadcrumb-item active">Upload file</li>
+                </ol>
+              </div>
+              <h4 class="page-title">Upload file</h4>
+            </div>
+          </div>
+        </div>
+        <!-- end page title -->
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <!-- end col -->
+
+                  <div class="col-xl-6">
+                    <div class="mb-3 mt-3 mt-xl-0">
+                      <label for="projectname" class="mb-0">Avatar</label>
+                      <p class="text-muted font-14">Recommended thumbnail size 800x400 (px).</p>
+
+                      <form action="{% url 'optimize' %}" method="POST" enctype="multipart/form-data" class="dropzone">
+                        {% csrf_token %}
+                        <div class="fallback">
+                          <input name="file" type="file" accept=".xlsx" />
+                        </div>
+                        <input type="hidden" name="project_id" value="{{ project_id }}" />
+
+                        <div class="dz-message needsclick">
+                          <i class="h3 text-muted ri-upload-cloud-2-line"></i>
+                          <h4>Drop files here or click to upload.</h4>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                      </form>
+
+                      <!-- Success/Error messages -->
+                      {% if message %}
+                        <div class="alert alert-success mt-3">{{ message }}</div>
+                      {% endif %}
+
+                      {% if error %}
+                        <div class="alert alert-danger mt-3">{{ error }}</div>
+                      {% endif %}
+                      <!-- end messages -->
+                    </div>
+                  </div>
+                  <!-- end col -->
+                </div>
+                <!-- end row -->
+              </div>
+              <!-- end card-body -->
+            </div>
+            <!-- end card -->
+          </div>
+          <!-- end col -->
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- container -->
+    </div>
+    <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-6">
+            <script>
+              document.write(new Date().getFullYear())
+            </script>© Hyper - Coderthemes.com
+          </div>
+          <div class="col-md-6">
+            <div class="text-md-end footer-links d-none d-md-block">
+              <a href="javascript: void(0);">About</a>
+              <a href="javascript: void(0);">Support</a>
+              <a href="javascript: void(0);">Contact Us</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- end Footer -->
+  </div>
+{% endblock %}

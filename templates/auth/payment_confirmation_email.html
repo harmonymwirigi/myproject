@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Confirmation</title>
+  </head>
+  <body>
+    <p>Hello {{ user.username }},</p>
+
+    <p>
+      We have received your payment for the subscription plan <strong>{{ plan.name }}</strong>.
+    </p>
+
+    <p>
+      <strong>Payment Details:</strong>
+    </p>
+    <ul>
+      <li>Amount: ${{ amount }}</li>
+      <li>Subscription Plan: {{ plan.name }}</li>
+      <li>Start Date: {{ subscription.start_date }}</li>
+      <li>End Date: {{ subscription.end_date }}</li>
+    </ul>
+
+    <p>Thank you for your purchase! You can now enjoy the full features of the {{ plan.name }} plan.</p>
+
+    <p>If you have any questions, feel free to contact our support team.</p>
+
+    <p>
+      Best regards,<br />Your Company Team
+    </p>
+  </body>
+</html>

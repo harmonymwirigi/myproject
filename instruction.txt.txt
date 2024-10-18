@@ -1,0 +1,24 @@
+1. Create a virtual environment
+ python -m venv ven
+
+2. Activate the virtual environment
+ven\Scripts\activate
+
+3. Install requirements
+ pip install -r requirements.txt
+4. Appy migration 
+ python manage.py migrate
+5. Create a supper user
+ python manage.py createsuperuser
+This will be prompted to enter a username, email, and password
+6. Run the development server 
+ python manage.py runserver
+
+
+The application will now be running on http://127.0.0.1:8000/. They
+ can open this URL in their web browser to see the application.
+
+Accessing the Admin Panel: If they created a superuser, they can access the admin 
+panel at http://127.0.0.1:8000/admin/ and log in using the superuser credentials.
+
+harmonymwirigi99@gmail.com

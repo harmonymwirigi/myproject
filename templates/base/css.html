@@ -1,0 +1,250 @@
+{% load static %}
+
+<!-- App favicon -->
+<link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}" />
+
+<!-- Theme Config Js -->
+<script src="{% static 'assets/js/hyper-config.js' %}"></script>
+<!-- App css -->
+
+<link href="{% static 'assets/css/app-modern.css' %}" rel="stylesheet" type="text/css" id="app-style" />
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<!-- Icons css -->
+<link href="{% static '/assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+<style>
+  /* Section styling */
+  .partners-section {
+    background-color: #f8f9fa; /* Light background to contrast logos */
+    padding: 60px 0;
+  }
+  /* Ensure no space is reserved when there are no messages */
+  .toast-container {
+    display: none; /* Initially hidden */
+  }
+  
+  .toast-container.show {
+    display: block; /* Show only when there are messages */
+  }
+  
+  /* Title styling */
+  .partners-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #007bff; /* Bright blue for a modern, professional look */
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  /* Partner logo styling */
+  .partner-logo {
+    transition: transform 0.3s ease;
+    padding: 20px;
+    max-width: 100%;
+  }
+  
+  .partner-logo:hover {
+    transform: scale(1.1); /* Slight scaling on hover */
+  }
+  
+  /* Partner logos container styling */
+  .partners-logos {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .partners-logos img {
+    max-height: 100px; /* Restricting logo size for uniformity */
+  }
+  /* General section styling */
+  .about-section {
+    background-color: #f0f8ff; /* Light appealing background */
+    padding: 60px 0;
+  }
+  
+  /* Section title styling */
+  .section-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #007bff; /* Professional blue for section title */
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  /* Icon styling */
+  .about-icon {
+    font-size: 3rem;
+    color: #007bff;
+  }
+  
+  /* Subsection title styling */
+  .about-subtitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  /* General text styling */
+  .about-text {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 20px;
+  }
+  
+  /* Image styling */
+  .about-img {
+    max-width: 100%;
+    border-radius: 10px;
+  }
+  
+  /* Flex container for content */
+  .about-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  /* Spacing for sections */
+  .about-content .col-md-6 {
+    margin-bottom: 30px;
+  }
+  /* Section styling */
+  .optimization-section {
+    background-color: #f8f9fa; /* Light background */
+    padding: 60px 0;
+  }
+  
+  /* Title styling */
+  .optimization-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  /* Process icon */
+  .process-icon {
+    font-size: 3rem;
+    color: #007bff;
+  }
+  
+  /* Process title */
+  .process-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* Process description */
+  .process-description {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  /* Flex layout for process steps */
+  .process-step {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .process-img {
+    max-width: 100%;
+    border-radius: 10px;
+  }
+  
+  .final-note {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-top: 40px;
+  }
+  /* Section styling */
+  .case-study-section {
+    background-color: #f0f4f7; /* Different light background */
+    padding: 60px 0;
+  }
+  
+  /* Title styling */
+  .case-study-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  /* Case study card */
+  .case-study-card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.2s;
+  }
+  
+  .case-study-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Case study description */
+  .case-study-description {
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+    color: #555;
+  }
+  
+  /* Case study image */
+  .case-study-img {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  /* Case study link */
+  .case-study-link {
+    color: #007bff;
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  .partner-logo-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 15px;
+    background-color: white; /* White background for clean contrast */
+    display: flex;
+    justify-content: center; /* Center logos horizontally */
+    align-items: center; /* Center logos vertically */
+    height: 150px; /* Fixed height */
+  }
+  
+  .partner-logo {
+    max-height: 100%; /* Image will scale to the container’s height */
+    max-width: 100%; /* Image will scale to the container’s width */
+    object-fit: contain; /* Keeps the original aspect ratio without stretching */
+  }
+  
+  .partner-logo-wrapper:hover {
+    transform: scale(1.05); /* Slight zoom effect on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increased shadow on hover */
+  }
+  
+  /* Media Queries to adjust the layout for smaller screens */
+  @media (max-width: 768px) {
+    .partner-logo-wrapper {
+      height: 120px; /* Adjust height for smaller screens */
+      margin-bottom: 20px;
+    }
+  }
+</style>

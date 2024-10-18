@@ -1,0 +1,50 @@
+{% extends 'landingbase.html' %}
+{% load static %}
+
+{% block main %}
+  <!-- Case Studies Section -->
+  <section class="case-study-section" style="background-color: #f5f5f5; padding: 60px 0;">
+    <div class="container">
+      <!-- Section Title -->
+      <h2 class="case-study-title text-center" style="font-family: 'Montserrat', sans-serif; color: #333333; font-size: 36px; font-weight: 600; margin-bottom: 40px;">Our Case Studies</h2>
+
+      <div class="row">
+        <!-- Case Study 1: Hybrid Approach -->
+        <div class="col-md-4 mb-4">
+          <div class="card case-study-card" style="border: none; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <img src="{% static 'assets/images/case_study/cs1.png' %}" alt="Hybrid Approach" class="card-img-top case-study-img img-fluid rounded-top" />
+            <div class="card-body" style="padding: 20px;">
+              <h5 class="card-title" style="font-family: 'Montserrat', sans-serif; color: #007bff; font-size: 20px; font-weight: 600;">Hybrid Approach To Minimize Construction Project Delays</h5>
+              <p class="case-study-description" style="font-family: 'Open Sans', sans-serif; color: #555555; font-size: 16px; line-height: 1.6;"></p>
+              <a href="https://www.etsmtl.ca/en/news/hybrid-approach-to-minimize-construction-project-delays" class="case-study-link" style="font-family: 'Open Sans', sans-serif; color: #007bff; font-size: 16px; text-decoration: underline;">Read More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Case Study 2: Optimization Model -->
+        <div class="col-md-4 mb-4">
+          <div class="card case-study-card" style="border: none; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <img src="{% static 'assets/images/case_study/cs2.png' %}" alt="Optimization Model" class="card-img-top case-study-img img-fluid rounded-top" />
+            <div class="card-body" style="padding: 20px;">
+              <h5 class="card-title" style="font-family: 'Montserrat', sans-serif; color: #007bff; font-size: 20px; font-weight: 600;">Optimization Model Based on Business Process Re-engineering</h5>
+              <p class="case-study-description" style="font-family: 'Open Sans', sans-serif; color: #555555; font-size: 16px; line-height: 1.6;"></p>
+              <a href="https://iglc.net/Papers/Details/2137" class="case-study-link" style="font-family: 'Open Sans', sans-serif; color: #007bff; font-size: 16px; text-decoration: underline;">Read More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Case Study 3: Multi-skills Impact -->
+        <div class="col-md-4 mb-4">
+          <div class="card case-study-card" style="border: none; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <img src="{% static 'assets/images/case_study/cs3.png' %}" alt="Multi-skills Impact" class="card-img-top case-study-img img-fluid rounded-top" />
+            <div class="card-body" style="padding: 20px;">
+              <h5 class="card-title" style="font-family: 'Montserrat', sans-serif; color: #007bff; font-size: 20px; font-weight: 600;">Impacts of Multi-skills on Project Productivity and Completion Time</h5>
+              <p class="case-study-description" style="font-family: 'Open Sans', sans-serif; color: #555555; font-size: 16px; line-height: 1.6;"></p>
+              <a href="https://doi.org/10.22260/ISARC2024/0042" class="case-study-link" style="font-family: 'Open Sans', sans-serif; color: #007bff; font-size: 16px; text-decoration: underline;">Read More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

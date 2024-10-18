@@ -1,0 +1,22 @@
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h2>Upload Excel File</h2>
+    <input type="file" name="excel_file">
+    <button type="submit">Upload</button>
+
+    <h2>Or Enter Data Manually</h2>
+
+    <h3>Projects</h3>
+    {{ project_form.as_p }}
+
+    <h3>Workers</h3>
+    {{ worker_form.as_p }}
+
+    <h3>Worker Skill Availability</h3>
+    {{ availability_form.as_p }}
+
+    <h3>Project Requirements</h3>
+    {{ requirement_form.as_p }}
+
+    <button type="submit">Submit Data</button>
+</form>

@@ -1,0 +1,173 @@
+{% extends 'landingbase.html' %}
+{% load static %}
+
+{% block main %}
+  <!-- START HERO -->
+  <section class="hero-section" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); padding: 100px 0; font-family: 'Poppins', sans-serif;">
+    <div class="container">
+      <div class="row align-items-center justify-content-center">
+        <div class="col-md-10">
+          <div class="text-center">
+            <h2 class="text-white fw-bold mb-4 mt-3 lh-base" style="font-size: 3rem; line-height: 1.2;">Optimize Your Projects Efficiently with Advanced Scheduling Solutions</h2>
+            <p class="mb-4 font-16 text-white-50" style="font-size: 1.1rem; color: #ffffffb3;">Cut Costs, Save Time, and Enhance Productivity with Data-Driven Scheduling Optimization</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- END HERO -->
+
+  <!-- Features Section -->
+  <section id="features" class="py-5 features-section" style="background-color: #f0f4f8; font-family: 'Lora', serif;">
+    <div class="container">
+      <h2 class="text-center mb-5" style="font-size: 2.5rem; color: #333;">Your All-in-One Solution for Project Scheduling Optimization</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card feature-card shadow-lg h-100 text-center" style="background-color: #fff; border: none; border-radius: 15px;">
+            <img src="https://www.zohowebstatic.com/sites/zweb/images/projects/home/timesheet-mobile.png" alt="Timesheet Mobile" class="img-fluid rounded-top" />
+            <div class="card-body">
+              <h3 style="font-size: 1.5rem; color: #2575fc;">Get Optimized Results in Seconds</h3>
+              <p style="font-size: 1rem; color: #555;">Experience faster project planning and scheduling with real-time updates.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card shadow-lg h-100 text-center" style="background-color: #fff; border: none; border-radius: 15px;">
+            <img src="{% static 'assets/images/products/manage2.jpg' %}" alt="Dashboard" class="img-fluid rounded-top" />
+            <div class="card-body">
+              <h3 style="font-size: 1.5rem; color: #2575fc;">Stay on Time, Stay on Budget</h3>
+              <p style="font-size: 1rem; color: #555;">Monitor your project's progress and costs efficiently to ensure success.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card shadow-lg h-100 text-center" style="background-color: #fff; border: none; border-radius: 15px;">
+            <img src="{% static 'assets/images/picture_2.png' %}" alt="Task Management" class="img-fluid rounded-top" />
+            <div class="card-body">
+              <h3 style="font-size: 1.5rem; color: #2575fc;">Save Planning Cost & Time</h3>
+              <p style="font-size: 1rem; color: #555;">Reduce time spent on manual planning with intelligent automation tools.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- START SERVICES -->
+  <section class="py-5" style="background-color: #e9ecef;">
+    <div class="container">
+      <div class="row py-4">
+        <div class="col-lg-12">
+          <div class="text-center">
+            <h3 style="font-size: 2.2rem; font-family: 'Poppins', sans-serif;">Innovative <span class="text-primary">Technology</span> For Scheduling <span class="text-primary">Optimization</span></h3>
+            <p class="text-muted mt-2" style="font-size: 1.1rem;">Do you know large scale scheduling and resource assignment problems are NP-hard, meaning they are computationally difficult to solve, but they can be solved quickly using our latest optimization methods.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- First Point -->
+        <div class="col-lg-4 col-md-6">
+          <div class="text-center p-3 bg-white shadow-lg h-100" style="border-radius: 15px;">
+            <div class="m-auto">
+              <img src="{% static 'assets/images/picture_3.png' %}" alt="Icon" class="img-fluid" />
+            </div>
+            <h4 class="mt-3" style="color: #2575fc; font-family: 'Poppins', sans-serif;">Transform Your Business</h4>
+            <p class="text-muted mt-2 mb-0">Leverage our novel technology to optimize and manage projects and resources effectively.</p>
+          </div>
+        </div>
+
+        <!-- Second Point -->
+        <div class="col-lg-4 col-md-6">
+          <div class="text-center p-3 bg-white shadow-lg h-100" style="border-radius: 15px;">
+            <div class="m-auto">
+              <img src="{% static 'assets/images/picture_3.png' %}" alt="Icon" class="img-fluid" />
+            </div>
+            <h4 class="mt-3" style="color: #2575fc; font-family: 'Poppins', sans-serif;">Research-Driven Solutions</h4>
+            <p class="text-muted mt-2 mb-0">Backed by years of rigorous research and development, our solutions are built on the latest advancements in optimization and heuristic methods.</p>
+          </div>
+        </div>
+
+        <!-- Third Point -->
+        <div class="col-lg-4 col-md-6">
+          <div class="text-center p-3 bg-white shadow-lg h-100" style="border-radius: 15px;">
+            <div class="m-auto">
+              <img src="{% static 'assets/images/picture_3.png' %}" alt="Icon" class="img-fluid" />
+            </div>
+            <h4 class="mt-3" style="color: #2575fc; font-family: 'Poppins', sans-serif;">Optimal Plan Generation</h4>
+            <p class="text-muted mt-2 mb-0">Generate optimal scheduling and resource utilization plans via our dashboard in just seconds.</p>
+          </div>
+        </div>
+
+        <!-- Fourth Point -->
+        <div class="col-lg-4 col-md-6">
+          <div class="text-center p-3 bg-white shadow-lg h-100" style="border-radius: 15px;">
+            <div class="m-auto">
+              <img src="{% static 'assets/images/picture_3.png' %}" alt="Icon" class="img-fluid" />
+            </div>
+            <h4 class="mt-3" style="color: #2575fc; font-family: 'Poppins', sans-serif;">Expert Support</h4>
+            <p class="text-muted mt-2 mb-0">Our dedicated team is here to support you every step of the way.</p>
+          </div>
+        </div>
+
+        <!-- Fifth Point -->
+        <div class="col-lg-4 col-md-6">
+          <div class="text-center p-3 bg-white shadow-lg h-100" style="border-radius: 15px;">
+            <div class="m-auto">
+              <img src="{% static 'assets/images/picture_3.png' %}" alt="Icon" class="img-fluid" />
+            </div>
+            <h4 class="mt-3" style="color: #2575fc; font-family: 'Poppins', sans-serif;">User-Friendly Software</h4>
+            <p class="text-muted mt-2 mb-0">Simple to use with Excel input and output—just upload your file and get results in an Excel file.</p>
+          </div>
+        </div>
+
+        <!-- Sixth Point: Customize Your Model -->
+        <div class="col-lg-4 col-md-6">
+          <div class="text-center p-3 bg-white shadow-lg h-100" style="border-radius: 15px;">
+            <div class="m-auto">
+              <img src="{% static 'assets/images/picture_3.png' %}" alt="Icon" class="img-fluid" />
+            </div>
+            <h4 class="mt-3" style="color: #2575fc; font-family: 'Poppins', sans-serif;">Customize Your Model</h4>
+            <p class="text-muted mt-2 mb-0">Customize your model and constraints based on your own requirements for optimized results.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- END SERVICES -->
+
+  <!-- Partners and Customers Section -->
+  <section class="partners-section py-5" style="background-color: #f7f9fc;">
+    <div class="container">
+      <h2 class="partners-title text-center mb-5" style="font-family: 'Poppins', sans-serif; color: #333;">Our Trusted Customers & Partners</h2>
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-2 col-6 text-center">
+          <div class="partner-logo-wrapper">
+            <img src="{% static 'assets/images/partners/partner1.jpg' %}" alt="Partner 1" class="partner-logo" />
+          </div>
+        </div>
+        <div class="col-md-2 col-6 text-center">
+          <div class="partner-logo-wrapper">
+            <img src="{% static 'assets/images/partners/partner2.jpg' %}" alt="Partner 2" class="partner-logo" />
+          </div>
+        </div>
+        <div class="col-md-2 col-6 text-center">
+          <div class="partner-logo-wrapper">
+            <img src="{% static 'assets/images/partners/partner3.jpg' %}" alt="Partner 3" class="partner-logo" />
+          </div>
+        </div>
+        <div class="col-md-2 col-6 text-center">
+          <div class="partner-logo-wrapper">
+            <img src="{% static 'assets/images/partners/partner4.png' %}" alt="Partner 4" class="partner-logo" />
+          </div>
+        </div>
+        <div class="col-md-2 col-6 text-center">
+          <div class="partner-logo-wrapper">
+            <img src="{% static 'assets/images/partners/partner5.png' %}" alt="Partner 5" class="partner-logo" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

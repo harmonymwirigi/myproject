@@ -1,0 +1,217 @@
+{% load static %}
+
+<div class="content-page">
+  <div class="content">
+    <!-- Start Content -->
+    <div class="container-fluid">
+      {% include 'dashboard/message.html' %}
+
+      <div class="row">
+        <div class="col-12">
+          <div class="page-title-box">
+            <div class="page-title-right">
+              <form class="d-flex">
+                <div class="input-group">
+                  <input type="text" class="form-control form-control-light" id="dash-daterange" />
+                  <span class="input-group-text bg-primary border-primary text-white"><i class="mdi mdi-calendar-range font-13"></i></span>
+                </div>
+                <a href="javascript: void(0);" class="btn btn-primary ms-2"><i class="mdi mdi-autorenew"></i></a>
+                <a href="javascript: void(0);" class="btn btn-primary ms-1"><i class="mdi mdi-filter-variant"></i></a>
+              </form>
+            </div>
+            <h4 class="page-title">Dashboard</h4>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xl-12 col-lg-12">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="card widget-flat">
+                <div class="card-body">
+                  <div class="float-end">
+                    <i class="mdi mdi-account-multiple widget-icon"></i>
+                  </div>
+                  <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Projects</h5>
+                  <h3 class="mt-3 mb-3">{{ total_projects }}</h3>
+                  <p class="mb-0 text-muted">
+                    {% comment %}
+                    <span class="text-success me-2"><i class="mdi mdi-arrow-up-bold"></i> 5.27</span>
+                    {% endcomment %}
+                  </p>
+                </div>
+                <!-- end card-body -->
+              </div>
+              <!-- end card -->
+            </div>
+            <!-- end col -->
+
+            <div class="col-sm-6">
+              <div class="card widget-flat">
+                <div class="card-body">
+                  <div class="float-end">
+                    <i class="mdi mdi-cart-plus widget-icon bg-success-lighten text-success"></i>
+                  </div>
+                  <h5 class="text-muted fw-normal mt-0" title="Number of Orders">Subscription</h5>
+                  {% if subscription %}
+                    <h3 class="mt-3 mb-3">{{ subscription.plan.name }}</h3>
+                    <span class="text-nowrap">From {{ subscription.start_date|date:'F d, Y' }} to {{ subscription.end_date|date:'F d, Y' }}</span>
+                    <p class="mb-0 text-muted">
+                      <a href="{% url 'change_subscription' %}" class="btn btn-success">Change</a>
+
+                      <a href="{% url 'cancel_subscription' subscription.id %}" type="submit" class="btn btn-danger">Cancel</a>
+                    </p>
+                  {% else %}
+                    <p>
+                      You do not have an active subscription.
+                      <a href="{% url 'subscription_list' %}">Subscribe now</a>.
+                    </p>
+                  {% endif %}
+                </div>
+                <!-- end card-body -->
+              </div>
+              <!-- end card -->
+            </div>
+            <!-- end col -->
+          </div>
+          <!-- end row -->
+
+          <!-- end row -->
+        </div>
+        <!-- end col -->
+
+        <!-- end col -->
+      </div>
+      <!-- end row -->
+
+      <div class="row">
+        <!-- end col -->
+
+        <!-- end col -->
+
+        <div class="col-xl-6 col-lg-6 order-lg-1">
+          <div class="card">
+            <div class="d-flex card-header justify-content-between align-items-center">
+              <h4 class="header-title">Process</h4>
+              <div class="dropdown">
+                <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></a>
+              </div>
+            </div>
+
+            <div class="card-body py-0 mb-3" data-simplebar style="max-height: 403px">
+              <div class="timeline-alt py-0">
+                <div class="timeline-item">
+                  <i class="mdi mdi-upload bg-info-lighten text-info timeline-icon"></i>
+                  <div class="timeline-item-info">
+                    <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Input Your Data</a>
+                    <small>Add number of projects details, , workers, Planning horizon and Calender and no of criteria easily in the software or simply via Excel file upload.!</small>
+                    <p class="mb-0 pb-2">
+                      <small class="text-muted">2 seconds</small>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <i class="mdi mdi-airplane bg-primary-lighten text-primary timeline-icon"></i>
+                  <div class="timeline-item-info">
+                    <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Set Constraints</a>
+                    <small>
+                      Set your own constraints /condtions for optimizing for cost , time , projects precedence and workers availability
+                      <span class="fw-bold"></span>
+                    </small>
+                    <p class="mb-0 pb-2">
+                      <small class="text-muted">10-30 seconds</small>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <i class="mdi mdi-microphone bg-info-lighten text-info timeline-icon"></i>
+                  <div class="timeline-item-info">
+                    <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Set Objective</a>
+                    <small>
+                      Set you own objective depends upon the requirements such as time optimization , cost optimizaiton, maximize resources utilization or optimize all.
+                      <span class="fw-bold"></span>
+                    </small>
+                    <p class="mb-0 pb-2">
+                      <small class="text-muted">3-10 seconds</small>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <i class="mdi mdi-upload bg-primary-lighten text-primary timeline-icon"></i>
+                  <div class="timeline-item-info">
+                    <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Run the Optimization</a>
+                    <small>
+                      Our powerful engine calculates the optimal schedule based on multiple criteria, including worker availability, task dependencies, budget and many more
+                      <span class="fw-bold"></span>
+                    </small>
+                    <p class="mb-0 pb-2">
+                      <small class="text-muted">10-40 seconds</small>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <i class="mdi mdi-upload bg-info-lighten text-info timeline-icon"></i>
+                  <div class="timeline-item-info">
+                    <a href="javascript:void(0);" class="text-info fw-bold mb-1 d-block">Get Results Fast</a>
+                    <small>Receive an optimized schedule in seconds, complete with Excel reports and visualizations.</small>
+                    <p class="mb-0 pb-2">
+                      <small class="text-muted">0 seconds</small>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <i class="mdi mdi-airplane bg-primary-lighten text-primary timeline-icon"></i>
+                  <div class="timeline-item-info">
+                    <a href="javascript:void(0);" class="text-primary fw-bold mb-1 d-block">Download the Optimized Schedule</a>
+                    <small>
+                      Download detailed actionable reports, including Gantt charts and summary dashboard Gantt Charts: Easily track project timelines and task dependencies.Cost Breakdowns: Visualize workforce costs to identify savings opportunities.Resource Utilization: Ensure your team is performing at full capacity.
+                      <span class="fw-bold"></span>
+                    </small>
+                    <p class="mb-0 pb-2">
+                      <small class="text-muted">0 seconds</small>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!-- end timeline -->
+            </div>
+            <!-- end slimscroll -->
+          </div>
+          <!-- end card -->
+        </div>
+        <!-- end col -->
+      </div>
+      <!-- end row -->
+      <!-- files row -->
+    </div>
+    <!-- container -->
+  </div>
+  <!-- content -->
+
+  <!-- Footer Start -->
+  <footer class="footer">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <script>
+            document.write(new Date().getFullYear())
+          </script>© Hyper - Coderthemes.com
+        </div>
+        <div class="col-md-6">
+          <div class="text-md-end footer-links d-none d-md-block">
+            <a href="javascript: void(0);">About</a>
+            <a href="javascript: void(0);">Support</a>
+            <a href="javascript: void(0);">Contact Us</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- end Footer -->
+</div>

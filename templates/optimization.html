@@ -1,0 +1,72 @@
+{% extends 'landingbase.html' %}
+{% load static %}
+
+{% block main %}
+  <!-- Optimization Solution Section -->
+  <section class="optimization-section">
+    <div class="container">
+      <!-- Section Title -->
+      <h2 class="optimization-title">How Our Optimization Solution Works</h2>
+
+      <!-- Section Introduction -->
+      <p class="text-center mb-3">Our intuitive interface lets you manage and optimize everything through clean and simple dashboards, providing real-time insights into project progress, task dependencies, and resource allocation. See everything at a glance with interactive charts and graphs.</p>
+      <p class="text-center mb-5">No more guesswork—make data-driven decisions using advanced optimization techniques. Cut Costs without loosing quality.Get compelete control over total project time and cost</p>
+
+      <!-- Process Steps -->
+      <div class="row">
+        <!-- Step 1: Input Your Data -->
+        <div class="col-md-4 process-step">
+          <i class="fas fa-database process-icon"></i>
+          <h3 class="process-title">1. Input Your Data</h3>
+          <p class="process-description">Add number of projects details, , workers, Planning horizon and Calender and no of criteria easily in the software or simply via Excel file upload.</p>
+          <img src="{% static 'assets/images/process/step1.png' %}" alt="Input Data" class="process-img" />
+        </div>
+
+        <!-- Step 2: Set Constraints -->
+        <div class="col-md-4 process-step">
+          <i class="fas fa-sliders-h process-icon"></i>
+          <h3 class="process-title">2. Set Constraints</h3>
+          <p class="process-description">Set your own constraints /condtions for optimizing for cost , time , projects precedence and workers availability</p>
+          <img src="{% static 'assets/images/process/step2.png' %}" alt="Set Constraints" class="process-img" />
+        </div>
+
+        <!-- Step 3: Set Objective -->
+        <div class="col-md-4 process-step">
+          <i class="fas fa-bullseye process-icon"></i>
+          <h3 class="process-title">3. Set Objective</h3>
+          <p class="process-description">Set you own objective depends upon the requirements such as time optimization , cost optimizaiton, maximize resources utilization or optimize all.</p>
+          <img src="{% static 'assets/images/process/step3.png' %}" alt="Set Objective" class="process-img" />
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Step 4: Run the Optimization -->
+        <div class="col-md-4 process-step">
+          <i class="fas fa-play process-icon"></i>
+          <h3 class="process-title">4. Run the Optimization</h3>
+          <p class="process-description">Our powerful engine calculates the optimal schedule based on multiple criteria, including worker availability, task dependencies, budget and many more</p>
+          <img src="{% static 'assets/images/process/step4.png' %}" alt="Run Optimization" class="process-img" />
+        </div>
+
+        <!-- Step 5: Get Results Fast -->
+        <div class="col-md-4 process-step">
+          <i class="fas fa-chart-line process-icon"></i>
+          <h3 class="process-title">5. Get Results Fast</h3>
+          <p class="process-description">Receive an optimized schedule in seconds, complete with Excel reports and visualizations.</p>
+          <img src="{% static 'assets/images/process/step5.png' %}" alt="Get Results" class="process-img" />
+        </div>
+
+        <!-- Step 6: Download Schedule -->
+        <div class="col-md-4 process-step">
+          <i class="fas fa-download process-icon"></i>
+          <h3 class="process-title">6. Download the Optimized Schedule</h3>
+          <p class="process-description">Download detailed actionable reports, including Gantt charts and summary dashboard Gantt Charts: Easily track project timelines and task dependencies.Cost Breakdowns: Visualize workforce costs to identify savings opportunities.Resource Utilization: Ensure your team is performing at full capacity.</p>
+          <img src="{% static 'assets/images/process/step6.png' %}" alt="Download Schedule" class="process-img" />
+        </div>
+      </div>
+
+      <!-- Final Note -->
+      <p class="final-note">Most of the time our univeral package software fulfills the clients requirements . But If you need additional features, feel free to reach out to us, and we will add specific functionality in the software to meet your specific requirements including consultancy with our experts.</p>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,327 @@
+{% extends "dashboard/base.html" %} {% block content %}
+<div class="content-page">
+  <div class="content">
+    <!-- Start Content-->
+    <div class="container-fluid">
+      {% include 'dashboard/message.html' %}
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="header-title">Select Data Input Method</h4>
+              <p class="text-muted">
+                Choose how you would like to input your data.
+              </p>
+
+              <!-- File Upload Form -->
+              <div id="file-upload-section" class="mt-4">
+                <form
+                  id="file-upload-form"
+                  method="POST"
+                  enctype="multipart/form-data"
+                >
+                  {% csrf_token %}
+                  <div class="">
+                    <input name="file" type="file" />
+                  </div>
+                  <button type="submit" class="btn btn-primary mt-2">
+                    Submit
+                  </button>
+                </form>
+              </div>
+
+              <!-- Table Input -->
+              <div id="table-input-section" class="mt-4" style="display: none">
+                <table class="table table-bordered" id="data-table">
+                  <thead>
+                    <tr id="table-header">
+                      <th>Column 1</th>
+                      <th>Column 2</th>
+                      <th>Column 3</th>
+                      <th>Remove Column</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <input type="text" class="form-control" name="col1" />
+                      </td>
+                      <td>
+                        <input type="text" class="form-control" name="col2" />
+                      </td>
+                      <td>
+                        <input type="text" class="form-control" name="col3" />
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          class="btn btn-danger remove-column-btn"
+                        >
+                          &times;
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <button type="button" id="add-row" class="btn btn-secondary">
+                  Add Row
+                </button>
+                <button type="button" id="add-column" class="btn btn-secondary">
+                  Add Column
+                </button>
+                <button
+                  type="submit"
+                  id="table-submit"
+                  class="btn btn-primary mt-2"
+                >
+                  Submit
+                </button>
+              </div>
+
+              <!-- Progress Bar -->
+              <div
+                class="progress mt-4"
+                style="display: none"
+                id="progress-bar-section"
+              >
+                <div
+                  class="progress-bar progress-bar-striped progress-bar-animated"
+                  role="progressbar"
+                  aria-valuenow="0"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  style="width: 0%"
+                  id="progress-bar"
+                >
+                  0%
+                </div>
+              </div>
+
+              <!-- Output Area -->
+              <div id="output" class="mt-4">
+                <h5>Output will be displayed here</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- container -->
+  </div>
+  <!-- content -->
+
+  <!-- Footer Start -->
+  <footer class="footer">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <script>
+            document.write(new Date().getFullYear());
+          </script>
+          © Hyper - Coderthemes.com
+        </div>
+        <div class="col-md-6">
+          <div class="text-md-end footer-links d-none d-md-block">
+            <a href="javascript: void(0);">About</a>
+            <a href="javascript: void(0);">Support</a>
+            <a href="javascript: void(0);">Contact Us</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- end Footer -->
+</div>
+
+<script>
+  // Toggle sections based on input method selection
+  // Toggle sections based on input method selection
+  document.querySelectorAll('input[name="inputMethod"]').forEach((element) => {
+    element.addEventListener("change", function () {
+      console.log("Input method selected: ", this.id); // Debugging line to check the id
+
+      // Use the id attribute to compare
+      if (this.id === "fileUploadRadio") {
+        document.getElementById("file-upload-section").style.display = "block";
+        document.getElementById("table-input-section").style.display = "none";
+      } else if (this.id === "tableInputRadio") {
+        document.getElementById("file-upload-section").style.display = "none";
+        document.getElementById("table-input-section").style.display = "block";
+      }
+    });
+  });
+
+  // Add row functionality
+  document.getElementById("add-row").addEventListener("click", function () {
+    let table = document
+      .getElementById("data-table")
+      .getElementsByTagName("tbody")[0];
+    let newRow = table.insertRow();
+    let columnCount = table.rows[0].cells.length - 1; // Excluding the 'Remove Column' cell
+
+    for (let i = 0; i < columnCount; i++) {
+      let cell = newRow.insertCell(i);
+      let input = document.createElement("input");
+      input.type = "text";
+      input.className = "form-control";
+      cell.appendChild(input);
+    }
+
+    // Add remove column button
+    let removeCell = newRow.insertCell(columnCount);
+    let removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "btn btn-danger remove-column-btn";
+    removeButton.innerHTML = "&times;";
+    removeCell.appendChild(removeButton);
+  });
+
+  // Add column functionality
+  document.getElementById("add-column").addEventListener("click", function () {
+    let table = document.getElementById("data-table");
+    let headerRow = document.getElementById("table-header");
+    let newColumnIndex = headerRow.cells.length - 1; // New column index before the 'Remove Column' cell
+    let newColumnHeader = document.createElement("th");
+    newColumnHeader.innerText = "Column " + (newColumnIndex + 1);
+    headerRow.insertBefore(newColumnHeader, headerRow.cells[newColumnIndex]);
+
+    // Add new cells to each row in the table body
+    let tableBody = table.getElementsByTagName("tbody")[0];
+    for (let row of tableBody.rows) {
+      let newCell = row.insertCell(newColumnIndex);
+      let input = document.createElement("input");
+      input.type = "text";
+      input.className = "form-control";
+      newCell.appendChild(input);
+    }
+  });
+  // Show the correct section based on the pre-selected radio button
+  document.addEventListener("DOMContentLoaded", function () {
+    if (selectedMethod) {
+      let selectedMethod = document.querySelector(
+        'input[name="inputMethod"]:checked'
+      );
+
+      if (selectedMethod.value === "file") {
+        document.getElementById("file-upload-section").style.display = "block";
+      } else if (selectedMethod.value === "table") {
+        document.getElementById("table-input-section").style.display = "block";
+      }
+    }
+  });
+  element.addEventListener("change", function () {
+    console.log("Input method selected: ", this.value); // Debugging line
+    if (this.value === "file") {
+      document.getElementById("file-upload-section").style.display = "block";
+      document.getElementById("table-input-section").style.display = "none";
+    } else if (this.value === "table") {
+      document.getElementById("file-upload-section").style.display = "none";
+      document.getElementById("table-input-section").style.display = "block";
+    }
+  });
+
+  // Remove column functionality
+  document.getElementById("data-table").addEventListener("click", function (e) {
+    if (e.target && e.target.className.includes("remove-column-btn")) {
+      let cellIndex = e.target.parentElement.cellIndex;
+      let table = document.getElementById("data-table");
+
+      // Remove header cell
+      table.rows[0].deleteCell(cellIndex);
+
+      // Remove corresponding cells from body rows
+      for (let row of table.rows) {
+        if (row.rowIndex !== 0) {
+          row.deleteCell(cellIndex);
+        }
+      }
+    }
+  });
+
+  // Form submission with progress bar and AJAX for both file and table inputs
+  document.getElementById("file-upload-form").onsubmit = function (e) {
+    e.preventDefault();
+
+    let formData = new FormData(this);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", '{% url "optimize" %}', true);
+
+    xhr.upload.onprogress = function (event) {
+      if (event.lengthComputable) {
+        let percentComplete = (event.loaded / event.total) * 100;
+        document.getElementById("progress-bar-section").style.display = "block";
+        document.getElementById("progress-bar").style.width =
+          percentComplete + "%";
+        document.getElementById("progress-bar").innerText =
+          Math.floor(percentComplete) + "%";
+      }
+    };
+
+    xhr.onload = function () {
+      if (xhr.status == 200) {
+        document.getElementById("output").innerHTML = xhr.responseText;
+      } else {
+        document.getElementById("output").innerHTML =
+          "Error: " + xhr.statusText;
+      }
+    };
+
+    xhr.send(formData);
+  };
+
+  document
+    .getElementById("table-submit")
+    .addEventListener("click", function () {
+      let table = document.getElementById("data-table");
+      let tableData = {};
+
+      // Get headers
+      let headers = Array.from(table.rows[0].cells)
+        .slice(0, -1)
+        .map((cell) => cell.innerText);
+
+      // Get data from table cells
+      Array.from(table.rows)
+        .slice(1)
+        .forEach((row, rowIndex) => {
+          headers.forEach((header, colIndex) => {
+            if (!tableData[header]) tableData[header] = [];
+            tableData[header].push(
+              row.cells[colIndex].querySelector("input").value
+            );
+          });
+        });
+
+      // Send data to server
+      let xhr = new XMLHttpRequest();
+      xhr.open("POST", '{% url "optimize" %}', true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+
+      xhr.upload.onprogress = function (event) {
+        if (event.lengthComputable) {
+          let percentComplete = (event.loaded / event.total) * 100;
+          document.getElementById("progress-bar-section").style.display =
+            "block";
+          document.getElementById("progress-bar").style.width =
+            percentComplete + "%";
+          document.getElementById("progress-bar").innerText =
+            Math.floor(percentComplete) + "%";
+        }
+      };
+
+      xhr.onload = function () {
+        if (xhr.status == 200) {
+          document.getElementById("output").innerHTML = xhr.responseText;
+        } else {
+          document.getElementById("output").innerHTML =
+            "Error: " + xhr.statusText;
+        }
+      };
+
+      xhr.send(JSON.stringify(tableData));
+    });
+</script>
+{% endblock content %}

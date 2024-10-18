@@ -1,0 +1,63 @@
+{% extends "dashboard/base.html" %} 
+
+{% block content %}
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+            {% include 'dashboard/message.html' %}
+            <!-- subscriptions/subscription_plans.html -->
+<div class="row mt-5 pt-3">
+    {% for plan in plans %}
+    <div class="col-md-4">
+        <div class="card card-pricing {% if plan.name == 'Universal Plan' %}card-pricing-recommended{% endif %}">
+            <div class="card-body text-center">
+                {% if plan.name == 'Universal Plan' %}
+                <div class="card-pricing-plan-tag">Recommended</div>
+                {% endif %}
+                <p class="card-pricing-plan-name fw-bold text-uppercase">{{ plan.name }}</p>
+                <i class="card-pricing-icon ri-user-line text-primary"></i> <!-- Replace icon based on the plan -->
+                <h2 class="card-pricing-price">${{ plan.price }} <span>/ {{ plan.duration_days }} days</span></h2>
+                <ul class="card-pricing-features">
+                    <li>{{ plan.description }}</li>
+                    {% if plan.trial_days > 0 %}
+                    <li>Includes {{ plan.trial_days }} days free trial</li>
+                    {% endif %}
+                </ul>
+                <a href="{% url 'subscribe' plan.id %}" class="btn btn-primary mt-4 mb-2 rounded-pill">Choose Plan</a>
+            </div>
+        </div>
+        <!-- end Pricing_card -->
+    </div>
+    <!-- end col -->
+    {% endfor %}
+</div>
+
+
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <script>document.write(new Date().getFullYear())</script> © Hyper - Coderthemes.com
+                </div>
+                <div class="col-md-6">
+                    <div class="text-md-end footer-links d-none d-md-block">
+                        <a href="javascript: void(0);">About</a>
+                        <a href="javascript: void(0);">Support</a>
+                        <a href="javascript: void(0);">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end Footer -->
+
+</div>
+{% endblock content %} 
+
